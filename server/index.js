@@ -136,21 +136,21 @@ app.get('/api/students', async (req, res) => {
       );
     }
 
-    // Attach turnout stats
-    const sessions = await dbAttendance.getSessions();
-    students = students.map(student => {
-      let attended = 0;
-      let total = 0;
-      // Calculate from sessions
+    // Attach real turnout stats from actual attendance sessions
+    students = await Promise.all(students.map(async student => {
+      const history = await dbAttendance.getStudentHistory(student.id);
+      const total = history.length;
+      const attended = history.filter(h => h.status === 'Present' || h.status === 'Late').length;
+      const attendancePct = total > 0 ? Math.round((attended / total) * 100) : null;
       return {
         ...student,
         attendanceStats: {
-          total: sessions.length,
-          attended: Math.round(sessions.length * 0.85),
-          attendancePct: 85
+          total,
+          attended,
+          attendancePct
         }
       };
-    });
+    }));
 
     res.json({ students });
   } catch (err) {
@@ -276,18 +276,25 @@ app.get('/api/attendance/history/:studentId', async (req, res) => {
       return res.status(404).json({ error: 'Student not found' });
     }
 
-    const sessions = await dbAttendance.getSessions();
+    const history = await dbAttendance.getStudentHistory(student.id);
+    const totalSessions = history.length;
+    const presentCount = history.filter(h => h.status === 'Present').length;
+    const absentCount = history.filter(h => h.status === 'Absent').length;
+    const lateCount = history.filter(h => h.status === 'Late').length;
+    const excusedCount = history.filter(h => h.status === 'Excused').length;
+    const attendancePct = totalSessions > 0 ? Math.round(((presentCount + lateCount) / totalSessions) * 100) : 0;
+
     res.json({
       student,
       summary: {
-        totalSessions: sessions.length,
-        presentCount: sessions.length,
-        absentCount: 0,
-        lateCount: 0,
-        excusedCount: 0,
-        attendancePct: 100
+        totalSessions,
+        presentCount,
+        absentCount,
+        lateCount,
+        excusedCount,
+        attendancePct
       },
-      history: []
+      history
     });
   } catch (err) {
     res.status(500).json({ error: err.message });

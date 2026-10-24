@@ -107,8 +107,12 @@ export default function StudentHistoryModal({ student, onClose }) {
           {/* Rate */}
           <div className="col-span-2 sm:col-span-1 bg-gradient-to-br from-emerald-500/10 to-teal-500/10 border border-emerald-500/30 p-3 rounded-2xl flex flex-col justify-center items-center text-center">
             <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase">Turnout</span>
-            <span className="text-2xl font-black text-emerald-600 dark:text-emerald-400">{summary.attendancePct}%</span>
-            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Rate</span>
+            <span className="text-2xl font-black text-emerald-600 dark:text-emerald-400">
+              {summary.totalSessions > 0 && summary.attendancePct !== null ? `${summary.attendancePct}%` : '—'}
+            </span>
+            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">
+              {summary.totalSessions > 0 ? 'Rate' : 'No Sessions Yet'}
+            </span>
           </div>
 
           {/* Present */}

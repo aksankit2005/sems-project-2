@@ -81,6 +81,35 @@ export async function initDatabase() {
     const eqCount = await pool.query('SELECT COUNT(*) FROM equipment;');
     console.log(`📦 [PostgreSQL] Equipment inventory ready (${eqCount.rows[0].count} items).`);
 
+    // Check students table status & seed if empty
+    const stuCount = await pool.query('SELECT COUNT(*) FROM students;');
+    if (parseInt(stuCount.rows[0].count, 10) === 0) {
+      console.log('🌱 [PostgreSQL] Seeding initial student roster from directory catalog...');
+      const fallback = readFallbackData();
+      for (const s of (fallback.students || [])) {
+        await pool.query(
+          `INSERT INTO students (id, roll_number, name, college, gender, residency, hostel_name, room_number, phone, sports)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+           ON CONFLICT (roll_number) DO NOTHING;`,
+          [
+            s.id,
+            s.rollNumber,
+            s.name,
+            s.college || 'MPGI',
+            s.gender || 'Male',
+            s.residency || 'Hosteller',
+            s.hostelName || 'Maharana Pratap Boys Hostel',
+            s.roomNumber || 'N/A',
+            s.phone || '',
+            JSON.stringify(s.sports || ['Cricket'])
+          ]
+        );
+      }
+      console.log('✅ [PostgreSQL] Initial student roster seeded successfully.');
+    } else {
+      console.log(`🎓 [PostgreSQL] Students directory ready (${stuCount.rows[0].count} registered).`);
+    }
+
     return true;
   } catch (err) {
     isPgConnected = false;
@@ -632,6 +661,37 @@ export const dbAttendance = {
     }
     writeFallbackData(data);
     return sessionObj;
+  },
+
+  async getStudentHistory(studentId) {
+    if (isPgConnected) {
+      const res = await pool.query(
+        `SELECT r.status, r.remark as notes, TO_CHAR(s.date, 'YYYY-MM-DD') as date, s.sport, s.session_time as "sessionType"
+         FROM attendance_records r
+         JOIN attendance_sessions s ON r.session_id = s.id
+         WHERE r.student_id = $1 AND r.status != 'Unmarked'
+         ORDER BY s.date DESC;`,
+        [studentId]
+      );
+      return res.rows;
+    }
+    const data = readFallbackData();
+    const history = [];
+    (data.attendance || []).forEach(s => {
+      if (s.records && s.records[studentId]) {
+        const rec = s.records[studentId];
+        if (rec && rec.status && rec.status !== 'Unmarked') {
+          history.push({
+            date: s.date,
+            sport: s.sport,
+            sessionType: s.sessionType || 'Evening Practice',
+            status: rec.status,
+            notes: rec.notes || ''
+          });
+        }
+      }
+    });
+    return history.sort((a, b) => new Date(b.date) - new Date(a.date));
   }
 };
 
