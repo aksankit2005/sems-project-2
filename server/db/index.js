@@ -472,6 +472,49 @@ export const dbLoans = {
       writeFallbackData(data);
     }
     return loan;
+  },
+
+  async delete(loanId) {
+    if (isPgConnected) {
+      // First get loan details to restore equipment stock if active/overdue
+      const loanRes = await pool.query('SELECT * FROM loans WHERE id = $1;', [loanId]);
+      if (loanRes.rows.length === 0) return null;
+      const loan = loanRes.rows[0];
+
+      // If active/overdue, restore equipment quantity
+      if (loan.status === 'Active' || loan.status === 'Overdue') {
+        const eqId = loan.equipment_id;
+        const qty = loan.quantity || 1;
+        if (eqId) {
+          await pool.query(
+            `UPDATE equipment 
+             SET available_quantity = available_quantity + $1, 
+                 issued_quantity = GREATEST(0, issued_quantity - $1), 
+                 updated_at = NOW() 
+             WHERE id = $2;`,
+            [qty, eqId]
+          );
+        }
+      }
+
+      await pool.query('DELETE FROM loans WHERE id = $1;', [loanId]);
+      return loan;
+    }
+    const data = readFallbackData();
+    const idx = data.loans.findIndex(l => l.id === loanId);
+    if (idx !== -1) {
+      const [removed] = data.loans.splice(idx, 1);
+      if (removed.status === 'Active' || removed.status === 'Overdue') {
+        const eq = data.equipment.find(e => e.id === removed.equipmentId);
+        if (eq) {
+          eq.availableQuantity = (eq.availableQuantity || 0) + (removed.quantity || 1);
+          eq.issuedQuantity = Math.max(0, (eq.issuedQuantity || 0) - (removed.quantity || 1));
+        }
+      }
+      writeFallbackData(data);
+      return removed;
+    }
+    return null;
   }
 };
 

@@ -251,6 +251,20 @@ export const api = {
     }
   },
 
+  async deleteLoan(loanId) {
+    try {
+      const res = await fetch(`${API_BASE}/equipment/loans/${encodeURIComponent(loanId)}`, {
+        method: 'DELETE',
+      });
+      if (res.ok) return await res.json();
+      const err = await res.json();
+      throw new Error(err.error || 'Failed to delete loan record');
+    } catch (e) {
+      console.error('API deleteLoan failed', e);
+      throw e;
+    }
+  },
+
   // Delete student
   async deleteStudent(studentId) {
     try {

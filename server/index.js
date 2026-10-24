@@ -522,7 +522,7 @@ app.post('/api/equipment/issue', async (req, res) => {
       } else {
         processedItems.push({
           equipmentId: null,
-          name: it.name.trim(),
+          name: (it.name || 'Sports Equipment').trim(),
           sport: it.sport || 'Custom / Misc',
           quantity: qty
         });
@@ -609,6 +609,20 @@ app.post('/api/equipment/return', async (req, res) => {
 
     const updated = await dbLoans.markReturned(loanId, condition, notes);
     res.json({ success: true, loan: updated });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// DELETE /api/equipment/loans/:id (Delete loan from PostgreSQL and history)
+app.delete('/api/equipment/loans/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deleted = await dbLoans.delete(id);
+    if (!deleted) {
+      return res.status(404).json({ error: 'Loan record not found' });
+    }
+    res.json({ success: true, message: `Loan ${id} deleted successfully` });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
