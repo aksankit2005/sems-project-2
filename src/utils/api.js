@@ -39,15 +39,15 @@ export const api = {
       console.warn('API fetch stats failed, calculating locally', e);
     }
     return {
-      totalStudents: 12,
-      hostellers: 9,
-      dayScholars: 3,
-      activeLoans: 2,
-      overdueLoans: 1,
-      totalEquipmentItems: 95,
-      issuedEquipmentItems: 25,
-      attendanceRate: 88,
-      totalSessions: 4
+      totalStudents: 0,
+      hostellers: 0,
+      dayScholars: 0,
+      activeLoans: 0,
+      overdueLoans: 0,
+      totalEquipmentItems: 0,
+      issuedEquipmentItems: 0,
+      attendanceRate: 0,
+      totalSessions: 0
     };
   },
 

@@ -88,7 +88,7 @@ app.get('/api/stats', async (req, res) => {
       presentAttendanceLogs += (s.present || 0) + (s.late || 0);
     });
 
-    const attendanceRate = totalAttendanceLogs > 0 ? Math.round((presentAttendanceLogs / totalAttendanceLogs) * 100) : 85;
+    const attendanceRate = totalAttendanceLogs > 0 ? Math.round((presentAttendanceLogs / totalAttendanceLogs) * 100) : 0;
 
     res.json({
       totalStudents,

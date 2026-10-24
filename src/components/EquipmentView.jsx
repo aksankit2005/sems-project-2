@@ -1069,7 +1069,39 @@ _MPGI Sports Desk_`;
 
       {/* SUB-TAB 2: INVENTORY STOCK CATALOG (Bacha hua saman) */}
       {activeSubTab === 'inventory' && (
-        viewMode === 'table' ? (
+        loading ? (
+          <div className="py-12 flex justify-center text-slate-400">Loading equipment inventory...</div>
+        ) : filteredEquipment.length === 0 ? (
+          <div className="py-14 text-center bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-8 flex flex-col items-center justify-center shadow-sm">
+            <div className="w-14 h-14 rounded-2xl bg-blue-500/10 text-blue-600 dark:text-cyan-400 flex items-center justify-center mb-3">
+              <Package className="w-7 h-7" />
+            </div>
+            <h3 className="font-bold text-base text-slate-900 dark:text-slate-100">
+              {searchQuery ? 'No matching equipment found' : 'No equipment in inventory'}
+            </h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-md">
+              {searchQuery 
+                ? 'Try adjusting your search terms or clear the search input.' 
+                : 'All mock stock has been removed. You can now use "Receive Stock Delivery" to register your genuine sports equipment.'}
+            </p>
+            <div className="mt-4 flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setShowBatchAddModal(true)}
+                className="px-4 py-2 rounded-xl text-xs font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-sm transition-all cursor-pointer"
+              >
+                + Receive Stock Delivery
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowAddEqModal(true)}
+                className="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-colors cursor-pointer"
+              >
+                + Add Single Item
+              </button>
+            </div>
+          </div>
+        ) : viewMode === 'table' ? (
           /* TABLE VIEW: INVENTORY STOCK (Requested in audio: 'Kaun sa saman bacha hua hai') */
           <div className="overflow-x-auto scrollbar-thin rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
             <table className="w-full text-left text-xs border-collapse min-w-[940px]">
