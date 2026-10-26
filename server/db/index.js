@@ -97,6 +97,41 @@ export async function initDatabase() {
       console.log('✅ [PostgreSQL] Schema Verified: Tables students, equipment, loans, attendance, day_scholar_passes are ready.');
     }
 
+    // Auto-migrate tables to ensure all required columns exist across any DB version (local or cloud)
+    const migrations = [
+      `ALTER TABLE day_scholar_passes ADD COLUMN IF NOT EXISTS pass_code VARCHAR(64);`,
+      `ALTER TABLE day_scholar_passes ADD COLUMN IF NOT EXISTS gate_number VARCHAR(128);`,
+      `ALTER TABLE day_scholar_passes ADD COLUMN IF NOT EXISTS gate_location VARCHAR(128);`,
+      `ALTER TABLE day_scholar_passes ADD COLUMN IF NOT EXISTS guard_name VARCHAR(128);`,
+      `ALTER TABLE day_scholar_passes ADD COLUMN IF NOT EXISTS guard_phone VARCHAR(32);`,
+      `ALTER TABLE day_scholar_passes ADD COLUMN IF NOT EXISTS status VARCHAR(32) DEFAULT 'Authorized';`,
+      `ALTER TABLE day_scholar_passes ADD COLUMN IF NOT EXISTS issued_by VARCHAR(128) DEFAULT 'Sports Admin';`,
+      `ALTER TABLE day_scholar_passes ADD COLUMN IF NOT EXISTS authorized_by VARCHAR(128) DEFAULT 'Sports Admin';`,
+      `ALTER TABLE day_scholar_passes ADD COLUMN IF NOT EXISTS authorized_students JSONB DEFAULT '[]'::jsonb;`,
+      `ALTER TABLE day_scholar_passes ADD COLUMN IF NOT EXISTS students JSONB DEFAULT '[]'::jsonb;`,
+      `ALTER TABLE day_scholar_passes ADD COLUMN IF NOT EXISTS notes TEXT;`,
+      `ALTER TABLE day_scholar_passes ADD COLUMN IF NOT EXISTS date VARCHAR(64);`,
+      `ALTER TABLE day_scholar_passes ADD COLUMN IF NOT EXISTS created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP;`,
+      `ALTER TABLE day_scholar_passes ALTER COLUMN pass_code DROP NOT NULL;`,
+      `ALTER TABLE day_scholar_passes ALTER COLUMN gate_number DROP NOT NULL;`,
+      `ALTER TABLE day_scholar_passes ALTER COLUMN guard_phone DROP NOT NULL;`,
+      `ALTER TABLE day_scholar_passes ALTER COLUMN authorized_students DROP NOT NULL;`,
+      `ALTER TABLE loans ADD COLUMN IF NOT EXISTS items JSONB DEFAULT '[]'::jsonb;`,
+      `ALTER TABLE loans ADD COLUMN IF NOT EXISTS is_flexible_return BOOLEAN DEFAULT false;`,
+      `ALTER TABLE loans ADD COLUMN IF NOT EXISTS handover_photo_url TEXT;`,
+      `ALTER TABLE loans ADD COLUMN IF NOT EXISTS return_condition VARCHAR(32);`,
+      `ALTER TABLE loans ADD COLUMN IF NOT EXISTS notes TEXT;`,
+      `ALTER TABLE students ADD COLUMN IF NOT EXISTS college VARCHAR(128) DEFAULT 'MPGI';`
+    ];
+
+    for (const sql of migrations) {
+      try {
+        await pool.query(sql);
+      } catch (migErr) {
+        // Silently continue if column already exists or constraint already dropped
+      }
+    }
+
     // Check equipment table status
     const eqCount = await pool.query('SELECT COUNT(*) FROM equipment;');
     console.log(`📦 [PostgreSQL] Equipment inventory ready (${eqCount.rows[0].count} items).`);
@@ -718,18 +753,26 @@ export const dbAttendance = {
 export const dbGatePasses = {
   async getAll() {
     if (isPgConnected) {
-      const res = await pool.query('SELECT * FROM day_scholar_passes ORDER BY created_at DESC;');
-      return res.rows.map(r => ({
-        id: r.id,
-        passCode: r.pass_code,
-        gateLocation: r.gate_number,
-        guardPhone: r.guard_phone,
-        status: r.status,
-        authorizedBy: r.issued_by,
-        students: typeof r.authorized_students === 'string' ? JSON.parse(r.authorized_students) : (r.authorized_students || []),
-        createdAt: r.created_at,
-        date: r.created_at ? new Date(r.created_at).toISOString().split('T')[0] : ''
-      }));
+      try {
+        const res = await pool.query('SELECT * FROM day_scholar_passes ORDER BY created_at DESC;');
+        return res.rows.map(r => ({
+          id: r.id || r.pass_code,
+          passCode: r.pass_code || r.id,
+          gateLocation: r.gate_location || r.gate_number || 'Main Campus Security Gate',
+          guardName: r.guard_name || 'Main Gate Security',
+          guardPhone: r.guard_phone || '',
+          status: r.status || 'Authorized',
+          authorizedBy: r.authorized_by || r.issued_by || 'Sports Coach',
+          notes: r.notes || '',
+          date: r.date || (r.created_at ? new Date(r.created_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]),
+          students: typeof (r.authorized_students || r.students) === 'string'
+            ? JSON.parse(r.authorized_students || r.students)
+            : (r.authorized_students || r.students || []),
+          createdAt: r.created_at || new Date().toISOString()
+        }));
+      } catch (err) {
+        console.warn('PostgreSQL getAll passes error, using fallback:', err.message);
+      }
     }
     const data = readFallbackData();
     return (data.gatePasses || []).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -737,31 +780,64 @@ export const dbGatePasses = {
 
   async create(pass) {
     if (isPgConnected) {
-      const res = await pool.query(
-        `INSERT INTO day_scholar_passes (id, pass_code, gate_number, guard_phone, status, issued_by, authorized_students)
-         VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *;`,
-        [
-          pass.id,
-          pass.id,
-          pass.gateLocation || 'Main Campus Security Gate',
-          pass.guardPhone || '',
-          pass.status || 'Authorized',
-          pass.authorizedBy || 'Sports Coach',
-          JSON.stringify(pass.students || [])
-        ]
-      );
-      const r = res.rows[0];
-      return {
-        id: r.id,
-        gateLocation: r.gate_number,
-        guardPhone: r.guard_phone,
-        status: r.status,
-        authorizedBy: r.issued_by,
-        students: typeof r.authorized_students === 'string' ? JSON.parse(r.authorized_students) : (r.authorized_students || []),
-        createdAt: r.created_at,
-        date: pass.date
-      };
+      try {
+        // Query information_schema to see which columns actually exist in day_scholar_passes
+        const colRes = await pool.query(`
+          SELECT column_name 
+          FROM information_schema.columns 
+          WHERE table_name = 'day_scholar_passes';
+        `);
+        const existingCols = new Set(colRes.rows.map(r => r.column_name));
+
+        const passDataMap = {
+          id: pass.id,
+          pass_code: pass.id,
+          gate_number: pass.gateLocation || 'Main Campus Security Gate',
+          gate_location: pass.gateLocation || 'Main Campus Security Gate',
+          guard_name: pass.guardName || 'Main Gate Security',
+          guard_phone: pass.guardPhone || '',
+          status: pass.status || 'Authorized',
+          issued_by: pass.authorizedBy || 'Sports Coach',
+          authorized_by: pass.authorizedBy || 'Sports Coach',
+          authorized_students: JSON.stringify(pass.students || []),
+          students: JSON.stringify(pass.students || []),
+          notes: pass.notes || '',
+          date: pass.date || new Date().toISOString().split('T')[0],
+          created_at: pass.createdAt || new Date().toISOString()
+        };
+
+        // Filter only columns that physically exist in the database table
+        const insertCols = Object.keys(passDataMap).filter(col => existingCols.has(col));
+        if (insertCols.length > 0) {
+          const insertVals = insertCols.map(col => passDataMap[col]);
+          const placeholders = insertCols.map((_, i) => `$${i + 1}`);
+
+          const insertSql = `INSERT INTO day_scholar_passes (${insertCols.join(', ')}) VALUES (${placeholders.join(', ')}) RETURNING *;`;
+          const res = await pool.query(insertSql, insertVals);
+          const r = res.rows[0];
+
+          return {
+            id: r.id || r.pass_code || pass.id,
+            passCode: r.pass_code || r.id || pass.id,
+            gateLocation: r.gate_location || r.gate_number || pass.gateLocation,
+            guardName: r.guard_name || pass.guardName,
+            guardPhone: r.guard_phone || pass.guardPhone,
+            status: r.status || pass.status,
+            authorizedBy: r.authorized_by || r.issued_by || pass.authorizedBy,
+            notes: r.notes || pass.notes,
+            date: r.date || pass.date,
+            students: typeof (r.authorized_students || r.students) === 'string'
+              ? JSON.parse(r.authorized_students || r.students)
+              : (r.authorized_students || r.students || pass.students || []),
+            createdAt: r.created_at || pass.createdAt
+          };
+        }
+      } catch (err) {
+        console.error('PostgreSQL create gate pass error, writing to fallback:', err.message);
+      }
     }
+
+    // Fallback JSON persistence (ensures zero downtime even if database query fails)
     const data = readFallbackData();
     if (!data.gatePasses) data.gatePasses = [];
     data.gatePasses.unshift(pass);
@@ -771,11 +847,15 @@ export const dbGatePasses = {
 
   async delete(passId) {
     if (isPgConnected) {
-      await pool.query('DELETE FROM day_scholar_passes WHERE id = $1;', [passId]);
-      return true;
+      try {
+        await pool.query('DELETE FROM day_scholar_passes WHERE id = $1 OR pass_code = $1;', [passId]);
+        return true;
+      } catch (err) {
+        console.warn('PostgreSQL delete gate pass error, falling back:', err.message);
+      }
     }
     const data = readFallbackData();
-    const idx = (data.gatePasses || []).findIndex(p => p.id === passId);
+    const idx = (data.gatePasses || []).findIndex(p => p.id === passId || p.passCode === passId);
     if (idx !== -1) {
       data.gatePasses.splice(idx, 1);
       writeFallbackData(data);
