@@ -32,14 +32,22 @@ import {
 import { api } from '../utils/api';
 import { exportLoansCSV, exportInventoryCSV } from '../utils/exportUtils';
 
-export default function EquipmentView({ onOpenIssueModal, refreshKey }) {
-  const [activeSubTab, setActiveSubTab] = useState('loans'); // 'loans' or 'inventory'
+export default function EquipmentView({ onOpenIssueModal, refreshKey, initialSport }) {
+  const [activeSubTab, setActiveSubTab] = useState(initialSport ? 'inventory' : 'loans'); // 'loans' or 'inventory'
   const [equipmentList, setEquipmentList] = useState([]);
   const [loansList, setLoansList] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState(initialSport || '');
   const [loanStatusFilter, setLoanStatusFilter] = useState('all');
   const [viewMode, setViewMode] = useState('table'); // 'table' (default - as requested) or 'cards'
+
+  useEffect(() => {
+    if (initialSport) {
+      setActiveSubTab('inventory');
+      setSearchQuery(initialSport);
+    }
+  }, [initialSport]);
+
   
   // Return Modal State
   const [returnModalLoan, setReturnModalLoan] = useState(null);
@@ -453,38 +461,39 @@ _MPGI Sports Desk_`;
     <div className="flex flex-col gap-6">
       
       {/* Top Header & Sub-tab Switcher (Mobile responsive) */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center justify-between bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 p-3.5 sm:p-4 rounded-2xl shadow-sm">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center justify-between bg-white dark:bg-[#0c0e22] border border-slate-200 dark:border-slate-800 p-3.5 sm:p-4 rounded-2xl shadow-sm">
         
         {/* Sub-tabs segment control: full-width on mobile */}
-        <div className="w-full sm:w-auto grid grid-cols-2 sm:flex sm:items-center gap-1 bg-slate-100 dark:bg-slate-800/80 p-1 rounded-xl">
+        <div className="w-full sm:w-auto grid grid-cols-2 sm:flex sm:items-center gap-1 bg-slate-100 dark:bg-[#070818] p-1 rounded-xl border border-slate-200 dark:border-slate-800">
           <button
             onClick={() => setActiveSubTab('loans')}
-            className={`flex items-center justify-center gap-1.5 sm:gap-2 px-3 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+            className={`flex items-center justify-center gap-1.5 sm:gap-2 px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer ${
               activeSubTab === 'loans'
-                ? 'bg-white dark:bg-blue-600 text-blue-600 dark:text-white shadow-xs font-black'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+                ? 'bg-[#7156a5] text-white shadow-xs font-bold'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
-            <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-500" />
+            <Clock className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${activeSubTab === 'loans' ? 'text-white' : 'text-[#7156a5] dark:text-[#b8a5e5]'}`} />
             <span className="sm:hidden">Loans ({loansList.filter(l => l.status === 'Active' || l.status === 'Overdue').length})</span>
             <span className="hidden sm:inline">Issued Loans & Returns ({loansList.filter(l => l.status === 'Active' || l.status === 'Overdue').length} Active)</span>
           </button>
 
           <button
             onClick={() => setActiveSubTab('inventory')}
-            className={`flex items-center justify-center gap-1.5 sm:gap-2 px-3 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+            className={`flex items-center justify-center gap-1.5 sm:gap-2 px-3.5 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer ${
               activeSubTab === 'inventory'
-                ? 'bg-white dark:bg-blue-600 text-blue-600 dark:text-white shadow-xs font-black'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+                ? 'bg-[#7156a5] text-white shadow-xs font-bold'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
-            <Package className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-500" />
+            <Package className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${activeSubTab === 'inventory' ? 'text-white' : 'text-[#7156a5] dark:text-[#b8a5e5]'}`} />
             <span className="sm:hidden">Stock ({equipmentList.length})</span>
             <span className="hidden sm:inline">Stock Inventory ({equipmentList.length} Items)</span>
           </button>
         </div>
 
-        {/* Action Buttons: Stack cleanly on mobile with primary Issue CTA */}
+
+        {/* Action Buttons: Unified Primary & Dark Outlines */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
           
           <div className="flex items-center gap-2">
@@ -496,19 +505,19 @@ _MPGI Sports Desk_`;
                   exportInventoryCSV(filteredEquipment);
                 }
               }}
-              className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-xs transition-all cursor-pointer active:scale-95"
+              className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-[#12152e] dark:hover:bg-[#1a1e3d] text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-800 transition-all cursor-pointer active:scale-95"
               title="Download CSV Report"
             >
-              <Download className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <Download className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#7156a5] dark:text-[#b8a5e5]" />
               <span>{activeSubTab === 'loans' ? 'Export Loans (CSV)' : 'Export Stock (CSV)'}</span>
             </button>
 
             <button
               onClick={() => window.print()}
-              className="inline-flex items-center justify-center gap-1 px-3 py-2 rounded-xl text-xs sm:text-sm font-bold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition-all cursor-pointer"
+              className="inline-flex items-center justify-center gap-1 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-[#12152e] dark:hover:bg-[#1a1e3d] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 transition-all cursor-pointer"
               title="Print Ledger"
             >
-              <Printer className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <Printer className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400" />
               <span>Print</span>
             </button>
 
@@ -517,7 +526,7 @@ _MPGI Sports Desk_`;
                 <button
                   type="button"
                   onClick={() => setShowBatchAddModal(true)}
-                  className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold bg-blue-600 hover:bg-blue-500 text-white shadow-xs transition-all cursor-pointer active:scale-95"
+                  className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-[#7156a5] hover:bg-[#5e458e] text-white shadow-xs transition-all cursor-pointer active:scale-95"
                   title="Add delivery stock for a game"
                 >
                   <ListPlus className="w-4 h-4" />
@@ -527,17 +536,17 @@ _MPGI Sports Desk_`;
                 <button
                   type="button"
                   onClick={() => setShowAddEqModal(true)}
-                  className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-bold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition-all cursor-pointer"
+                  className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-[#12152e] dark:hover:bg-[#1a1e3d] text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-800 transition-all cursor-pointer"
                   title="Add single item"
                 >
-                  <Plus className="w-3.5 h-3.5" />
+                  <Plus className="w-3.5 h-3.5 text-[#7156a5] dark:text-[#b8a5e5]" />
                   <span className="hidden sm:inline">Quick Item</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setShowClearMockModal(true)}
-                  className="inline-flex items-center justify-center gap-1 px-2.5 py-2 rounded-xl text-xs sm:text-sm font-bold text-rose-600 dark:text-rose-400 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/30 dark:hover:bg-rose-900/40 border border-rose-200 dark:border-rose-900/40 transition-all cursor-pointer"
+                  className="inline-flex items-center justify-center gap-1 px-2.5 py-2 rounded-xl text-xs sm:text-sm font-semibold text-rose-600 dark:text-rose-400 hover:text-rose-700 bg-rose-50 dark:bg-rose-950/20 hover:bg-rose-100 dark:hover:bg-rose-950/40 border border-rose-200 dark:border-rose-900/30 transition-all cursor-pointer"
                   title="Clear all mock equipment data from database"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
@@ -549,7 +558,7 @@ _MPGI Sports Desk_`;
 
           <button
             onClick={onOpenIssueModal}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 shadow-md shadow-blue-500/25 transition-all cursor-pointer active:scale-95"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-white bg-[#7156a5] hover:bg-[#5e458e] shadow-xs transition-all cursor-pointer active:scale-95"
           >
             <Plus className="w-4 h-4" />
             <span>Issue Gear to Student</span>
@@ -559,7 +568,7 @@ _MPGI Sports Desk_`;
       </div>
 
       {/* Search & Filter Bar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white dark:bg-slate-900/90 p-3 sm:p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white dark:bg-[#0c0e22] p-3 sm:p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs">
         <div className="relative flex-1 w-full">
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
@@ -567,7 +576,7 @@ _MPGI Sports Desk_`;
             placeholder={activeSubTab === 'loans' ? "Search borrower, room no, hostel, or gear..." : "Search equipment by name or sport..."}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-3 py-2 rounded-xl text-xs sm:text-sm bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 outline-none focus:border-blue-500"
+            className="w-full pl-9 pr-3 py-2 rounded-xl text-xs sm:text-sm bg-slate-50 dark:bg-[#070818] border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 outline-none focus:border-[#7156a5]"
           />
         </div>
 
@@ -577,10 +586,10 @@ _MPGI Sports Desk_`;
               <button
                 key={st}
                 onClick={() => setLoanStatusFilter(st)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
                   loanStatusFilter === st
-                    ? 'bg-blue-600 text-white shadow-xs'
-                    : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 dark:hover:bg-slate-700'
+                    ? 'bg-[#7156a5] text-white shadow-xs font-bold'
+                    : 'bg-slate-100 hover:bg-slate-200 dark:bg-[#12152e] dark:hover:bg-[#1a1e3d] text-slate-700 dark:text-slate-400 border border-slate-200 dark:border-slate-800'
                 }`}
               >
                 {st === 'all' ? 'All Loans' : st}
@@ -590,14 +599,14 @@ _MPGI Sports Desk_`;
         )}
 
         {/* View Mode Switcher: Table View (Default) vs Card View */}
-        <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl border border-slate-200 dark:border-slate-700 self-end sm:self-center">
+        <div className="flex items-center gap-1 bg-slate-100 dark:bg-[#070818] p-1 rounded-xl border border-slate-200 dark:border-slate-800 self-end sm:self-center">
           <button
             type="button"
             onClick={() => setViewMode('table')}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
               viewMode === 'table'
-                ? 'bg-white dark:bg-blue-600 text-blue-600 dark:text-white shadow-xs'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                ? 'bg-[#7156a5] text-white shadow-xs'
+                : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
             }`}
             title="Table View (As Requested)"
           >
@@ -607,10 +616,10 @@ _MPGI Sports Desk_`;
           <button
             type="button"
             onClick={() => setViewMode('cards')}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
               viewMode === 'cards'
-                ? 'bg-white dark:bg-blue-600 text-blue-600 dark:text-white shadow-xs'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                ? 'bg-[#7156a5] text-white shadow-xs'
+                : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
             }`}
             title="Card View"
           >
@@ -620,50 +629,67 @@ _MPGI Sports Desk_`;
         </div>
       </div>
 
-      {/* Quick Summary Numbers Strip (Bacha hua saman vs Issu hua saman) */}
+      {/* Quick Summary Numbers Strip matching mpgisports.in clean dark surface */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
         {activeSubTab === 'loans' ? (
           <>
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-3 rounded-2xl flex flex-col">
-              <span className="text-[10px] text-slate-500 uppercase font-bold">Total Issued Loans</span>
-              <span className="text-lg sm:text-xl font-black text-slate-900 dark:text-slate-100 mt-0.5">{loansList.length}</span>
+            <div className="bg-white dark:bg-[#0d1025] border border-slate-200 dark:border-slate-800/80 p-3.5 rounded-xl flex flex-col justify-between hover:border-[#7156a5]/30 transition-colors shadow-2xs">
+              <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 uppercase font-semibold tracking-wider">Total Issued Loans</span>
+              <span className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mt-1">{loansList.length}</span>
             </div>
-            <div className="bg-amber-500/10 border border-amber-500/25 p-3 rounded-2xl flex flex-col">
-              <span className="text-[10px] text-amber-700 dark:text-amber-300 uppercase font-bold">Active Out On Loan</span>
-              <span className="text-lg sm:text-xl font-black text-amber-600 dark:text-amber-400 mt-0.5">{loansList.filter(l => l.status === 'Active').length}</span>
+            <div className="bg-white dark:bg-[#0d1025] border border-slate-200 dark:border-slate-800/80 p-3.5 rounded-xl flex flex-col justify-between hover:border-[#7156a5]/30 transition-colors shadow-2xs">
+              <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 uppercase font-semibold tracking-wider">Active Out On Loan</span>
+              <span className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mt-1">{loansList.filter(l => l.status === 'Active').length}</span>
             </div>
-            <div className="bg-rose-500/10 border border-rose-500/25 p-3 rounded-2xl flex flex-col">
-              <span className="text-[10px] text-rose-700 dark:text-rose-300 uppercase font-bold">Overdue Return</span>
-              <span className="text-lg sm:text-xl font-black text-rose-600 dark:text-rose-400 mt-0.5">{loansList.filter(l => l.status === 'Overdue').length}</span>
+            <div className="bg-white dark:bg-[#0d1025] border border-slate-200 dark:border-slate-800/80 p-3.5 rounded-xl flex flex-col justify-between hover:border-[#7156a5]/30 transition-colors shadow-2xs">
+              <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 uppercase font-semibold tracking-wider">Overdue Return</span>
+              <div className="flex items-baseline gap-2 mt-1">
+                <span className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">{loansList.filter(l => l.status === 'Overdue').length}</span>
+                {loansList.filter(l => l.status === 'Overdue').length > 0 && (
+                  <span className="text-[10px] text-rose-500 dark:text-rose-400 font-semibold">Requires Attention</span>
+                )}
+              </div>
             </div>
-            <div className="bg-emerald-500/10 border border-emerald-500/25 p-3 rounded-2xl flex flex-col">
-              <span className="text-[10px] text-emerald-700 dark:text-emerald-300 uppercase font-bold">Safely Returned</span>
-              <span className="text-lg sm:text-xl font-black text-emerald-600 dark:text-emerald-400 mt-0.5">{loansList.filter(l => l.status === 'Returned').length}</span>
+            <div className="bg-white dark:bg-[#0d1025] border border-slate-200 dark:border-slate-800/80 p-3.5 rounded-xl flex flex-col justify-between hover:border-[#7156a5]/30 transition-colors shadow-2xs">
+              <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 uppercase font-semibold tracking-wider">Safely Returned</span>
+              <span className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mt-1">{loansList.filter(l => l.status === 'Returned').length}</span>
             </div>
           </>
         ) : (
           <>
-            <div className="bg-emerald-500/10 border border-emerald-500/25 p-3 rounded-2xl flex flex-col">
-              <span className="text-[10px] text-emerald-700 dark:text-emerald-300 uppercase font-bold">Available Stock (बचा हुआ सामान)</span>
-              <span className="text-lg sm:text-xl font-black text-emerald-600 dark:text-emerald-400 mt-0.5">
-                {equipmentList.reduce((acc, e) => acc + (e.availableQuantity || 0), 0)} Units
-              </span>
+            <div className="bg-white dark:bg-[#0d1025] border border-slate-200 dark:border-slate-800/80 p-3.5 rounded-xl flex flex-col justify-between hover:border-[#7156a5]/30 transition-colors shadow-2xs">
+              <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 uppercase font-semibold tracking-wider">Available Stock (बचा हुआ सामान)</span>
+              <div className="flex items-baseline gap-2 mt-1">
+                <span className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
+                  {equipmentList.reduce((acc, e) => acc + (e.availableQuantity || 0), 0)}
+                </span>
+                <span className="text-xs text-slate-500 dark:text-slate-400 ml-1">Units</span>
+              </div>
             </div>
-            <div className="bg-amber-500/10 border border-amber-500/25 p-3 rounded-2xl flex flex-col">
-              <span className="text-[10px] text-amber-700 dark:text-amber-300 uppercase font-bold">Currently Issued (इशू हुआ सामान)</span>
-              <span className="text-lg sm:text-xl font-black text-amber-600 dark:text-amber-400 mt-0.5">
-                {equipmentList.reduce((acc, e) => acc + (e.issuedQuantity || 0), 0)} Units
-              </span>
+            <div className="bg-white dark:bg-[#0d1025] border border-slate-200 dark:border-slate-800/80 p-3.5 rounded-xl flex flex-col justify-between hover:border-[#7156a5]/30 transition-colors shadow-2xs">
+              <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 uppercase font-semibold tracking-wider">Currently Issued (इशू हुआ सामान)</span>
+              <div className="flex items-baseline gap-2 mt-1">
+                <span className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
+                  {equipmentList.reduce((acc, e) => acc + (e.issuedQuantity || 0), 0)}
+                </span>
+                <span className="text-xs text-slate-500 dark:text-slate-400 ml-1">Units</span>
+              </div>
             </div>
-            <div className="bg-blue-500/10 border border-blue-500/25 p-3 rounded-2xl flex flex-col">
-              <span className="text-[10px] text-blue-700 dark:text-blue-300 uppercase font-bold">Total Stock Units</span>
-              <span className="text-lg sm:text-xl font-black text-blue-600 dark:text-cyan-400 mt-0.5">
-                {equipmentList.reduce((acc, e) => acc + (e.totalQuantity || 0), 0)} Units
-              </span>
+            <div className="bg-white dark:bg-[#0d1025] border border-slate-200 dark:border-slate-800/80 p-3.5 rounded-xl flex flex-col justify-between hover:border-[#7156a5]/30 transition-colors shadow-2xs">
+              <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 uppercase font-semibold tracking-wider">Total Stock Units</span>
+              <div className="flex items-baseline gap-2 mt-1">
+                <span className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
+                  {equipmentList.reduce((acc, e) => acc + (e.totalQuantity || 0), 0)}
+                </span>
+                <span className="text-xs text-slate-500 dark:text-slate-400 ml-1">Units</span>
+              </div>
             </div>
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-3 rounded-2xl flex flex-col">
-              <span className="text-[10px] text-slate-500 uppercase font-bold">Master Catalog Items</span>
-              <span className="text-lg sm:text-xl font-black text-slate-900 dark:text-slate-100 mt-0.5">{equipmentList.length} Items</span>
+            <div className="bg-white dark:bg-[#0d1025] border border-slate-200 dark:border-slate-800/80 p-3.5 rounded-xl flex flex-col justify-between hover:border-[#7156a5]/30 transition-colors shadow-2xs">
+              <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 uppercase font-semibold tracking-wider">Master Catalog Items</span>
+              <div className="flex items-baseline gap-2 mt-1">
+                <span className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">{equipmentList.length}</span>
+                <span className="text-xs text-slate-500 dark:text-slate-400 ml-1">Items</span>
+              </div>
             </div>
           </>
         )}
@@ -1072,11 +1098,11 @@ _MPGI Sports Desk_`;
         loading ? (
           <div className="py-12 flex justify-center text-slate-400">Loading equipment inventory...</div>
         ) : filteredEquipment.length === 0 ? (
-          <div className="py-14 text-center bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-8 flex flex-col items-center justify-center shadow-sm">
-            <div className="w-14 h-14 rounded-2xl bg-blue-500/10 text-blue-600 dark:text-cyan-400 flex items-center justify-center mb-3">
+          <div className="py-14 text-center bg-white dark:bg-[#0c0e22] border border-slate-200 dark:border-slate-800 rounded-3xl p-8 flex flex-col items-center justify-center shadow-sm">
+            <div className="w-14 h-14 rounded-2xl bg-[#7156a5]/10 dark:bg-[#7156a5]/15 text-[#7156a5] dark:text-[#b8a5e5] border border-[#7156a5]/30 flex items-center justify-center mb-3">
               <Package className="w-7 h-7" />
             </div>
-            <h3 className="font-bold text-base text-slate-900 dark:text-slate-100">
+            <h3 className="font-bold text-base text-slate-900 dark:text-white">
               {searchQuery ? 'No matching equipment found' : 'No equipment in inventory'}
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-md">
@@ -1088,14 +1114,14 @@ _MPGI Sports Desk_`;
               <button
                 type="button"
                 onClick={() => setShowBatchAddModal(true)}
-                className="px-4 py-2 rounded-xl text-xs font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-sm transition-all cursor-pointer"
+                className="px-4 py-2 rounded-xl text-xs font-semibold bg-[#7156a5] hover:bg-[#5e458e] text-white shadow-xs transition-all cursor-pointer"
               >
                 + Receive Stock Delivery
               </button>
               <button
                 type="button"
                 onClick={() => setShowAddEqModal(true)}
-                className="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-colors cursor-pointer"
+                className="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-[#12152e] dark:hover:bg-[#1a1e3d] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 transition-colors cursor-pointer"
               >
                 + Add Single Item
               </button>

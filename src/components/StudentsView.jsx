@@ -138,11 +138,11 @@ export default function StudentsView({ onSelectStudentHistory }) {
     <div className="flex flex-col gap-6">
       
       {/* Top Header (Mobile responsive) */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center justify-between bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 p-3.5 sm:p-4 rounded-2xl shadow-sm">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center justify-between bg-white dark:bg-[#0c0e22] border border-slate-200 dark:border-slate-800 p-3.5 sm:p-4 rounded-2xl shadow-sm">
         <div>
-          <h2 className="font-bold text-base sm:text-lg text-slate-900 dark:text-slate-100 flex items-center gap-2">
-            <Users className="w-5 h-5 text-blue-600" />
-            <span>Hostel Sports Students Directory</span>
+          <h2 className="font-bold text-base sm:text-lg text-slate-900 dark:text-white flex items-center gap-2">
+            <Users className="w-5 h-5 text-[#7156a5] dark:text-[#b8a5e5]" />
+            <span>Hostel Sports Players Directory</span>
           </h2>
           <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5">
             Profiles of Hostellers and Day Scholars, room assignments, sports participated, and turnout stats.
@@ -153,35 +153,35 @@ export default function StudentsView({ onSelectStudentHistory }) {
           <div className="flex items-center gap-2">
             <button
               onClick={() => exportStudentsCSV(filteredStudents)}
-              className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-xs transition-all cursor-pointer active:scale-95"
+              className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-[#12152e] dark:hover:bg-[#1a1e3d] text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-800 shadow-xs transition-all cursor-pointer active:scale-95"
               title="Download Students Roster CSV"
             >
-              <Download className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <Download className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#7156a5] dark:text-[#b8a5e5]" />
               <span>Export Roster (CSV)</span>
             </button>
 
             <button
               onClick={() => window.print()}
-              className="inline-flex items-center justify-center gap-1 px-3 py-2 rounded-xl text-xs sm:text-sm font-bold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition-all cursor-pointer"
+              className="inline-flex items-center justify-center gap-1 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-[#12152e] dark:hover:bg-[#1a1e3d] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 transition-all cursor-pointer"
               title="Print Students Roster"
             >
-              <Printer className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <Printer className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400" />
               <span>Print</span>
             </button>
           </div>
 
           <button
             onClick={() => setShowAddModal(true)}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 shadow-md shadow-blue-500/25 transition-all cursor-pointer active:scale-95"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-white bg-[#7156a5] hover:bg-[#5e458e] shadow-xs transition-all cursor-pointer active:scale-95"
           >
-            <UserPlus className="w-4 h-4" />
+            <UserPlus className="w-4 h-4 text-white" />
             <span>Register New Player</span>
           </button>
         </div>
       </div>
 
       {/* Filter, Search Bar and View Mode Switcher */}
-      <div className="flex flex-col gap-2.5 bg-white dark:bg-slate-900/90 p-3 sm:p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs">
+      <div className="flex flex-col gap-2.5 bg-white dark:bg-[#0c0e22] p-3 sm:p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs">
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
           <div className="relative flex-1">
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -190,18 +190,18 @@ export default function StudentsView({ onSelectStudentHistory }) {
               placeholder="Search by player name, roll no, room no, hostel..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 rounded-xl text-xs sm:text-sm bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 outline-none focus:border-blue-500"
+              className="w-full pl-9 pr-3 py-2 rounded-xl text-xs sm:text-sm bg-slate-50 dark:bg-[#070818] border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 outline-none focus:border-[#7156a5]"
             />
           </div>
 
           {/* View Mode Toggle (Table / Grid) */}
-          <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl self-end sm:self-auto border border-slate-200/80 dark:border-slate-700">
+          <div className="flex items-center gap-1 bg-slate-100 dark:bg-[#070818] p-1 rounded-xl self-end sm:self-auto border border-slate-200 dark:border-slate-800">
             <button
               onClick={() => setViewMode('table')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                 viewMode === 'table'
-                  ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-cyan-400 shadow-xs'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                  ? 'bg-[#7156a5] text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
               }`}
               title="Table View (List format)"
             >
@@ -210,10 +210,10 @@ export default function StudentsView({ onSelectStudentHistory }) {
             </button>
             <button
               onClick={() => setViewMode('grid')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                 viewMode === 'grid'
-                  ? 'bg-white dark:bg-slate-700 text-blue-600 dark:text-cyan-400 shadow-xs'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                  ? 'bg-[#7156a5] text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
               }`}
               title="Cards Grid View"
             >
@@ -227,7 +227,7 @@ export default function StudentsView({ onSelectStudentHistory }) {
           <select
             value={residencyFilter}
             onChange={(e) => setResidencyFilter(e.target.value)}
-            className="w-full px-3 py-2 rounded-xl text-xs sm:text-sm font-medium bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 outline-none cursor-pointer"
+            className="w-full px-3 py-2 rounded-xl text-xs sm:text-sm font-medium bg-slate-50 dark:bg-[#070818] border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 outline-none focus:border-[#7156a5] cursor-pointer"
           >
             <option value="all">All Residency (Hosteller & Scholar)</option>
             <option value="hosteller">Hostellers Only</option>
@@ -237,7 +237,7 @@ export default function StudentsView({ onSelectStudentHistory }) {
           <select
             value={genderFilter}
             onChange={(e) => setGenderFilter(e.target.value)}
-            className="w-full px-3 py-2 rounded-xl text-xs sm:text-sm font-medium bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 outline-none cursor-pointer"
+            className="w-full px-3 py-2 rounded-xl text-xs sm:text-sm font-medium bg-slate-50 dark:bg-[#070818] border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 outline-none focus:border-[#7156a5] cursor-pointer"
           >
             <option value="all">All Genders</option>
             <option value="male">Boys / Male</option>
@@ -250,16 +250,16 @@ export default function StudentsView({ onSelectStudentHistory }) {
       {loading ? (
         <div className="py-12 flex justify-center text-slate-400">Loading student directory...</div>
       ) : filteredStudents.length === 0 ? (
-        <div className="py-12 text-center bg-white dark:bg-slate-900/60 rounded-2xl border border-slate-200 dark:border-slate-800 p-8">
+        <div className="py-12 text-center bg-white dark:bg-[#0c0e22] rounded-2xl border border-slate-200 dark:border-slate-800 p-8">
           <p className="text-slate-500 dark:text-slate-400">No students found matching your search.</p>
         </div>
       ) : viewMode === 'table' ? (
         /* TABLE VIEW (Default) */
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-xs">
+        <div className="bg-white dark:bg-[#0c0e22] border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-xs">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs sm:text-sm border-collapse min-w-[900px]">
               <thead>
-                <tr className="bg-slate-100/80 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700 text-[11px] sm:text-xs font-bold uppercase tracking-wider">
+                <tr className="bg-slate-50 dark:bg-[#070818] text-slate-700 dark:text-slate-300 border-b border-slate-200 dark:border-slate-800 text-[11px] sm:text-xs font-semibold uppercase tracking-wider">
                   <th className="py-3 px-3 text-center w-12">#</th>
                   <th className="py-3 px-3">Player Name & Roll No</th>
                   <th className="py-3 px-3">Residency & Accommodation</th>
@@ -270,7 +270,7 @@ export default function StudentsView({ onSelectStudentHistory }) {
                   <th className="py-3 px-3 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 text-slate-800 dark:text-slate-200">
                 {filteredStudents.map((student, idx) => {
                   const stats = student.attendanceStats || { attendancePct: 100, attended: 0, total: 0 };
                   const isHosteller = student.residency === 'Hosteller';
@@ -278,7 +278,7 @@ export default function StudentsView({ onSelectStudentHistory }) {
                   return (
                     <tr 
                       key={student.id}
-                      className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors"
+                      className="hover:bg-white/[0.02] transition-colors"
                     >
                       {/* Row Index */}
                       <td className="py-3 px-3 text-center font-mono text-slate-400 text-xs">
@@ -288,15 +288,15 @@ export default function StudentsView({ onSelectStudentHistory }) {
                       {/* Player Avatar & Name */}
                       <td className="py-3 px-3">
                         <div className="flex items-center gap-2.5">
-                          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-500 text-white flex items-center justify-center font-bold text-xs shadow-2xs flex-shrink-0">
+                          <div className="w-8 h-8 rounded-lg bg-[#7156a5]/25 text-[#b8a5e5] border border-[#7156a5]/40 flex items-center justify-center font-bold text-xs shadow-2xs flex-shrink-0">
                             {student.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
                           </div>
                           <div>
-                            <div className="font-bold text-slate-900 dark:text-slate-100 text-xs sm:text-sm">
+                            <div className="font-bold text-white text-xs sm:text-sm">
                               {student.name}
                             </div>
                             <div className="flex items-center gap-1.5 mt-0.5">
-                              <span className="font-mono text-[11px] text-slate-500 dark:text-slate-400">
+                              <span className="font-mono text-[11px] text-slate-400">
                                 {student.rollNumber}
                               </span>
                               <span className="inline-block px-1.5 py-0.5 rounded text-[9px] font-bold bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-500/20">

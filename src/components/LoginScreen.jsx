@@ -9,7 +9,9 @@ import {
   KeyRound, 
   Sparkles,
   Sun,
-  Moon
+  Moon,
+  Flame,
+  Trophy
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 
@@ -122,54 +124,65 @@ export default function LoginScreen({ onLoginSuccess }) {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center p-4 bg-gradient-to-br from-slate-900 via-slate-950 to-blue-950 text-slate-100 relative overflow-hidden select-none">
+    <div className="min-h-screen w-full flex items-center justify-center p-4 bg-gradient-to-br from-[#020617] via-[#091124] to-[#020617] text-slate-100 relative overflow-hidden select-none">
       
-      {/* Ambient Glows */}
-      <div className="absolute top-1/4 -left-20 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-cyan-500/15 rounded-full blur-3xl pointer-events-none" />
+      {/* Ambient Glows (Royal Purple and APEX Gold) */}
+      <div className="absolute top-1/4 -left-20 w-96 h-96 bg-[#7156a5]/25 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-[#d2ab45]/20 rounded-full blur-3xl pointer-events-none" />
       
+      {/* Subtle Grid Lines Overlay */}
+      <div 
+        className="absolute inset-0 opacity-[0.03] pointer-events-none" 
+        style={{ backgroundImage: 'radial-gradient(#d2ab45 1px, transparent 1px)', backgroundSize: '24px 24px' }}
+      />
+
       {/* Theme Toggle in top right */}
       <div className="absolute top-4 right-4 z-20">
         <button
           type="button"
           onClick={toggleTheme}
           aria-label="Toggle theme"
-          className="w-10 h-10 rounded-2xl flex items-center justify-center bg-white/10 hover:bg-white/20 text-slate-200 border border-white/10 transition-all cursor-pointer backdrop-blur-md"
+          className="w-10 h-10 rounded-2xl flex items-center justify-center bg-white/10 hover:bg-white/20 text-slate-200 border border-white/15 transition-all cursor-pointer backdrop-blur-md"
         >
           {isDark ? (
             <Sun className="w-4 h-4 text-amber-400" />
           ) : (
-            <Moon className="w-4 h-4 text-cyan-300" />
+            <Moon className="w-4 h-4 text-amber-300" />
           )}
         </button>
       </div>
 
-      {/* Main Login Card */}
+      {/* Main Login Card with mpgisports.in Gold & Obsidian styling */}
       <div 
-        className={`w-full max-w-md bg-white/10 dark:bg-slate-900/80 backdrop-blur-2xl border border-white/20 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl relative z-10 transition-transform ${
+        className={`w-full max-w-md bg-[#0b1329]/85 backdrop-blur-2xl border border-amber-500/30 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-black/60 relative z-10 transition-transform ${
           isShaking ? 'animate-bounce' : ''
         }`}
       >
         
         {/* Header / Logo */}
         <div className="flex flex-col items-center text-center mb-6">
-          <div className="relative mb-3">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-500 flex items-center justify-center p-3 shadow-lg shadow-blue-500/30 border border-white/30">
+          <div className="relative mb-3.5">
+            <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-[#020617] to-[#131d36] flex items-center justify-center p-3 shadow-xl border border-amber-500/40 relative">
               <img 
                 src="/apex-logo.png" 
-                alt="APEX Sports" 
-                className="w-full h-auto object-contain drop-shadow-md"
+                alt="MPGI APEX Sports Fest" 
+                className="w-full h-auto object-contain drop-shadow-[0_2px_12px_rgba(210,171,69,0.5)]"
               />
             </div>
-            <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center border-2 border-slate-900" title="Security Verified">
-              <Lock className="w-2.5 h-2.5" />
+            <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-amber-500 text-slate-950 flex items-center justify-center border-2 border-[#020617] font-bold shadow-md" title="Security Verified">
+              <Lock className="w-3 h-3 stroke-[2.5]" />
             </div>
           </div>
 
-          <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight flex items-center gap-1.5">
-            <span>APEX SPORTS FEST 2026</span>
+          <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-400 text-[10px] font-black uppercase tracking-widest mb-1.5">
+            <Flame className="w-3 h-3 text-amber-400 animate-pulse" />
+            <span>APEX CHAMPIONSHIP 2026</span>
+          </div>
+
+          <h1 className="font-brand text-xl sm:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-[#d2ab45] to-amber-400 tracking-wide">
+            MPGI SPORTS FEST
           </h1>
-          <p className="text-xs text-cyan-300/90 font-semibold mt-1">
+          <p className="text-xs text-[#b8a5e5] font-semibold mt-1">
             Hostel Sports Attendance & Equipment Desk
           </p>
           <span className="text-[11px] text-slate-400 mt-1">
@@ -202,7 +215,7 @@ export default function LoginScreen({ onLoginSuccess }) {
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-bold text-slate-300 flex items-center justify-between">
               <span className="flex items-center gap-1.5">
-                <User className="w-3.5 h-3.5 text-blue-400" />
+                <User className="w-3.5 h-3.5 text-amber-400" />
                 <span>Authorized Username</span>
               </span>
               <span className="text-[10px] text-slate-400">e.g. sems_campus</span>
@@ -216,9 +229,9 @@ export default function LoginScreen({ onLoginSuccess }) {
                 placeholder="Enter username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-900/60 border border-slate-700/80 focus:border-blue-500 text-slate-100 placeholder:text-slate-500 text-sm outline-none transition-colors disabled:opacity-50"
+                className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-900/80 border border-amber-500/20 focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 text-slate-100 placeholder:text-slate-500 text-sm outline-none transition-all disabled:opacity-50"
               />
-              <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
+              <User className="w-4 h-4 text-amber-400/60 absolute left-3.5 top-3.5" />
             </div>
           </div>
 
@@ -226,7 +239,7 @@ export default function LoginScreen({ onLoginSuccess }) {
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-bold text-slate-300 flex items-center justify-between">
               <span className="flex items-center gap-1.5">
-                <KeyRound className="w-3.5 h-3.5 text-blue-400" />
+                <KeyRound className="w-3.5 h-3.5 text-amber-400" />
                 <span>Security Password</span>
               </span>
               <span className="text-[10px] text-slate-400">Campus Access Key</span>
@@ -240,13 +253,13 @@ export default function LoginScreen({ onLoginSuccess }) {
                 placeholder="Enter password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 pr-11 py-3 rounded-xl bg-slate-900/60 border border-slate-700/80 focus:border-blue-500 text-slate-100 placeholder:text-slate-500 text-sm outline-none transition-colors disabled:opacity-50"
+                className="w-full pl-10 pr-11 py-3 rounded-xl bg-slate-900/80 border border-amber-500/20 focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 text-slate-100 placeholder:text-slate-500 text-sm outline-none transition-all disabled:opacity-50"
               />
-              <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
+              <Lock className="w-4 h-4 text-amber-400/60 absolute left-3.5 top-3.5" />
               <button
                 type="button"
                 onClick={() => setShowPassword(p => !p)}
-                className="absolute right-3 top-3 p-1 text-slate-400 hover:text-slate-200 cursor-pointer"
+                className="absolute right-3 top-3 p-1 text-slate-400 hover:text-amber-400 cursor-pointer"
                 title={showPassword ? 'Hide password' : 'Show password'}
               >
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -261,7 +274,7 @@ export default function LoginScreen({ onLoginSuccess }) {
                 type="checkbox"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
-                className="w-4 h-4 rounded text-blue-600 bg-slate-800 border-slate-700 focus:ring-blue-500"
+                className="w-4 h-4 rounded text-amber-500 bg-slate-800 border-slate-700 focus:ring-amber-500"
               />
               <span>Keep me signed in</span>
             </label>
@@ -275,11 +288,11 @@ export default function LoginScreen({ onLoginSuccess }) {
           <button
             type="submit"
             disabled={isAuthenticating || lockoutTimer > 0}
-            className="w-full py-3.5 px-4 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 active:scale-98 shadow-lg shadow-blue-500/30 transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2 mt-2"
+            className="w-full py-3.5 px-4 rounded-xl text-sm font-black text-slate-950 bg-gradient-to-r from-amber-400 via-[#d2ab45] to-amber-500 hover:from-amber-300 hover:to-amber-400 active:scale-98 shadow-xl shadow-amber-500/30 transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2 mt-2"
           >
             {isAuthenticating ? (
               <>
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <div className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
                 <span>Verifying Credentials...</span>
               </>
             ) : lockoutTimer > 0 ? (
@@ -287,7 +300,7 @@ export default function LoginScreen({ onLoginSuccess }) {
             ) : (
               <>
                 <span>Sign In to Sports Portal</span>
-                <Sparkles className="w-4 h-4 text-cyan-300" />
+                <Sparkles className="w-4 h-4 text-slate-950" />
               </>
             )}
           </button>
@@ -295,8 +308,8 @@ export default function LoginScreen({ onLoginSuccess }) {
 
         {/* Security Footer Note */}
         <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-center gap-2 text-center text-[11px] text-slate-400">
-          <ShieldCheck className="w-3.5 h-3.5 text-blue-400" />
-          <span>Official MPGI Sports Authority • Unauthorized access prohibited</span>
+          <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+          <span>Official MPGI Sports Authority • mpgisports.in</span>
         </div>
 
       </div>

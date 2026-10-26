@@ -95,7 +95,7 @@ function SwipeableAttendanceCard({
       {/* Header: Avatar, Name, Residency & Status Badge */}
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
-          <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-500 text-white flex items-center justify-center font-bold text-sm shadow-sm flex-shrink-0 border border-white/20">
+          <div className="w-11 h-11 rounded-2xl bg-[#7156a5]/25 text-[#b8a5e5] border border-[#7156a5]/40 flex items-center justify-center font-bold text-sm shadow-2xs flex-shrink-0">
             {student.name.split(' ').map(n => n[0]).join('')}
           </div>
           <div className="flex flex-col min-w-0">
@@ -277,9 +277,10 @@ function SwipeableAttendanceCard({
   );
 }
 
-export default function AttendanceView({ onSelectStudentHistory }) {
+export default function AttendanceView({ onSelectStudentHistory, initialSport }) {
   const [sports, setSports] = useState([]);
-  const [selectedSport, setSelectedSport] = useState('Cricket');
+  const [selectedSport, setSelectedSport] = useState(initialSport || 'Cricket');
+
   const [sessionDate, setSessionDate] = useState(() => new Date().toISOString().split('T')[0]);
   const [sessionType, setSessionType] = useState('Evening Practice');
   const [students, setStudents] = useState([]);
@@ -325,12 +326,21 @@ export default function AttendanceView({ onSelectStudentHistory }) {
     async function init() {
       const spList = await api.getSports();
       setSports(spList);
-      if (spList.length > 0) {
+      if (initialSport) {
+        setSelectedSport(initialSport);
+      } else if (spList.length > 0) {
         setSelectedSport(spList[0].name);
       }
     }
     init();
   }, []);
+
+  useEffect(() => {
+    if (initialSport) {
+      setSelectedSport(initialSport);
+    }
+  }, [initialSport]);
+
 
   // Fetch students & current attendance session whenever sport or date changes
   useEffect(() => {
@@ -542,10 +552,10 @@ export default function AttendanceView({ onSelectStudentHistory }) {
               <button
                 key={sp.id}
                 onClick={() => setSelectedSport(sp.name)}
-                className={`inline-flex items-center gap-2 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-2xl text-xs sm:text-sm font-semibold whitespace-nowrap transition-all duration-200 cursor-pointer flex-shrink-0 border ${
+                className={`inline-flex items-center gap-2 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition-all duration-200 cursor-pointer flex-shrink-0 border ${
                   isSelected
-                    ? 'bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 text-white border-transparent shadow-md shadow-blue-500/25 scale-102 font-bold'
-                    : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 shadow-2xs'
+                    ? 'bg-[#7156a5] text-white border-[#7156a5] shadow-xs font-bold'
+                    : 'bg-white hover:bg-slate-50 dark:bg-[#0c0e22] text-slate-700 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:text-slate-900 dark:hover:text-white shadow-2xs'
                 }`}
               >
                 <span className="text-base">{sp.icon}</span>
@@ -557,7 +567,7 @@ export default function AttendanceView({ onSelectStudentHistory }) {
       </div>
 
       {/* Session Controls & Date Bar (Mobile-first responsive layout) */}
-      <div className="bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl shadow-sm flex flex-col gap-4">
+      <div className="bg-white dark:bg-[#0c0e22] border border-slate-200 dark:border-slate-800 p-4 rounded-2xl shadow-sm flex flex-col gap-4">
         
         {/* Row 1: Date & Session Timing in a 2-col responsive grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -565,8 +575,8 @@ export default function AttendanceView({ onSelectStudentHistory }) {
           {/* Date Selector with Quick Step Buttons */}
           <div className="flex flex-col gap-1.5">
             <div className="flex items-center justify-between">
-              <label className="text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                <Calendar className="w-3.5 h-3.5 text-blue-500" />
+              <label className="text-[11px] font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                <Calendar className="w-3.5 h-3.5 text-[#7156a5] dark:text-[#b8a5e5]" />
                 Attendance Date
               </label>
               
@@ -574,7 +584,7 @@ export default function AttendanceView({ onSelectStudentHistory }) {
                 <button
                   type="button"
                   onClick={() => changeDateBy(-1)}
-                  className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 cursor-pointer"
+                  className="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 dark:bg-[#12152e] hover:bg-slate-200 dark:hover:bg-[#1a1e3d] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 cursor-pointer"
                   title="Previous Day"
                 >
                   ◀ Prev
@@ -582,7 +592,7 @@ export default function AttendanceView({ onSelectStudentHistory }) {
                 <button
                   type="button"
                   onClick={() => setSessionDate(new Date().toISOString().split('T')[0])}
-                  className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-cyan-400 border border-blue-200 dark:border-blue-800 cursor-pointer"
+                  className="px-2 py-0.5 rounded text-[10px] font-semibold bg-[#7156a5]/10 dark:bg-[#7156a5]/20 text-[#7156a5] dark:text-[#b8a5e5] border border-[#7156a5]/30 dark:border-[#7156a5]/40 cursor-pointer"
                   title="Jump to Today"
                 >
                   Today
@@ -590,7 +600,7 @@ export default function AttendanceView({ onSelectStudentHistory }) {
                 <button
                   type="button"
                   onClick={() => changeDateBy(1)}
-                  className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 cursor-pointer"
+                  className="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 dark:bg-[#12152e] hover:bg-slate-200 dark:hover:bg-[#1a1e3d] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 cursor-pointer"
                   title="Next Day"
                 >
                   Next ▶
@@ -602,15 +612,15 @@ export default function AttendanceView({ onSelectStudentHistory }) {
               type="date"
               value={sessionDate}
               onChange={(e) => setSessionDate(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl text-xs sm:text-sm font-medium bg-slate-50 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 outline-none focus:border-blue-500"
+              className="w-full px-3 py-2 rounded-xl text-xs sm:text-sm font-medium bg-slate-50 dark:bg-[#070818] border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 outline-none focus:border-[#7156a5]"
             />
           </div>
 
           {/* Session Timing & Past Sessions Log Button */}
           <div className="flex flex-col gap-1.5">
             <div className="flex items-center justify-between">
-              <label className="text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                <Clock className="w-3.5 h-3.5 text-amber-500" />
+              <label className="text-[11px] font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5 text-[#7156a5] dark:text-[#b8a5e5]" />
                 Session Timing
               </label>
               
@@ -620,7 +630,7 @@ export default function AttendanceView({ onSelectStudentHistory }) {
                   fetchAllSessions();
                   setShowSessionsDrawer(true);
                 }}
-                className="text-[11px] font-bold text-blue-600 dark:text-cyan-400 hover:underline flex items-center gap-1 cursor-pointer"
+                className="text-[11px] font-semibold text-[#7156a5] dark:text-[#b8a5e5] hover:underline flex items-center gap-1 cursor-pointer"
               >
                 <History className="w-3 h-3" />
                 <span>Past Sessions Log</span>
@@ -629,7 +639,7 @@ export default function AttendanceView({ onSelectStudentHistory }) {
             <select
               value={sessionType}
               onChange={(e) => setSessionType(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl text-xs sm:text-sm font-medium bg-slate-50 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 outline-none focus:border-blue-500 cursor-pointer"
+              className="w-full px-3 py-2 rounded-xl text-xs sm:text-sm font-medium bg-slate-50 dark:bg-[#070818] border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 outline-none focus:border-[#7156a5] cursor-pointer"
             >
               <option value="Morning Practice">Morning Practice (06:00 AM - 08:00 AM)</option>
               <option value="Evening Practice">Evening Practice (05:00 PM - 07:30 PM)</option>
@@ -641,7 +651,7 @@ export default function AttendanceView({ onSelectStudentHistory }) {
         </div>
 
         {/* Row 2: Bulk Actions & Save Button */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 pt-2 border-t border-slate-100 dark:border-slate-800">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 pt-2 border-t border-slate-200 dark:border-slate-800">
           
           {/* Quick Bulk Actions & Export in responsive grid */}
           <div className="grid grid-cols-2 sm:flex sm:items-center gap-1.5 flex-wrap">
@@ -651,10 +661,10 @@ export default function AttendanceView({ onSelectStudentHistory }) {
                 onClick={() => {
                   setIsMarkingActive(true);
                 }}
-                className={`px-3 py-2 rounded-xl text-xs font-bold border flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95 ${
+                className={`px-3 py-2 rounded-xl text-xs font-semibold border flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95 ${
                   isMarkingActive 
-                    ? 'bg-blue-500/15 text-blue-700 dark:text-cyan-300 border-blue-500/40' 
-                    : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white border-transparent shadow-xs'
+                    ? 'bg-[#7156a5]/15 text-[#7156a5] border-[#7156a5]/30 dark:bg-[#7156a5]/20 dark:text-[#b8a5e5] dark:border-[#7156a5]/40' 
+                    : 'bg-[#7156a5] hover:bg-[#5e458e] text-white border-transparent shadow-xs'
                 }`}
                 title="Start Marking Attendance"
               >
@@ -665,37 +675,37 @@ export default function AttendanceView({ onSelectStudentHistory }) {
 
             <button
               onClick={() => handleMarkAll('Present')}
-              className="px-3 py-2 rounded-xl text-xs font-bold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95"
+              className="px-3 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-[#12152e] dark:hover:bg-[#1a1e3d] text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-800 flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95"
               title="Mark All Present"
             >
-              <CheckSquare className="w-3.5 h-3.5" />
+              <CheckSquare className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" />
               <span>All Present</span>
             </button>
             
             <button
               onClick={() => handleMarkAll('Unmarked')}
-              className="px-3 py-2 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95"
+              className="px-3 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-[#12152e] dark:hover:bg-[#1a1e3d] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95"
               title="Reset All to Unmarked"
             >
-              <RotateCcw className="w-3.5 h-3.5" />
+              <RotateCcw className="w-3.5 h-3.5 text-slate-400" />
               <span>Reset (Unmark)</span>
             </button>
             
             <button
               onClick={() => exportAttendanceCSV(sessionDate, selectedSport, sessionType, filteredStudents, attendanceRecords)}
-              className="px-3 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95"
+              className="px-3 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-[#12152e] dark:hover:bg-[#1a1e3d] text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-800 shadow-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95"
               title="Download Attendance CSV"
             >
-              <Download className="w-3.5 h-3.5" />
+              <Download className="w-3.5 h-3.5 text-[#7156a5] dark:text-[#b8a5e5]" />
               <span>Export CSV</span>
             </button>
             
             <button
               onClick={() => window.print()}
-              className="px-3 py-2 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+              className="px-3 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-[#12152e] dark:hover:bg-[#1a1e3d] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 flex items-center justify-center gap-1.5 transition-all cursor-pointer"
               title="Print Attendance Sheet"
             >
-              <Printer className="w-3.5 h-3.5" />
+              <Printer className="w-3.5 h-3.5 text-slate-400" />
               <span>Print</span>
             </button>
           </div>
@@ -704,7 +714,7 @@ export default function AttendanceView({ onSelectStudentHistory }) {
           <button
             onClick={handleSaveAttendance}
             disabled={saving}
-            className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white shadow-md shadow-blue-500/25 flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-95 disabled:opacity-50"
+            className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-[#7156a5] hover:bg-[#5e458e] text-white shadow-xs flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-95 disabled:opacity-50"
           >
             <Save className="w-4 h-4" />
             <span>{saving ? 'Saving...' : 'Save Attendance Session'}</span>
@@ -738,11 +748,11 @@ export default function AttendanceView({ onSelectStudentHistory }) {
 
       </div>
 
-      {/* Session Quick Status Ticker (5-card metric grid including Unmarked) */}
-      <div className="bg-slate-50 dark:bg-slate-900/60 p-3 sm:p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 flex flex-col gap-2.5 shadow-2xs">
+      {/* Session Quick Status Ticker (5-card metric grid matching mpgisports.in) */}
+      <div className="bg-white dark:bg-[#0c0e22] p-3 sm:p-4 rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-col gap-2.5 shadow-2xs">
         <div className="flex items-center justify-between text-xs">
-          <span className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+          <span className="font-semibold text-slate-900 dark:text-white flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-[#7156a5] animate-pulse"></span>
             Live Attendance Count
           </span>
           <span className="text-slate-500 dark:text-slate-400 text-[11px] font-semibold">
@@ -751,35 +761,35 @@ export default function AttendanceView({ onSelectStudentHistory }) {
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5 sm:gap-2.5 text-center">
-          <div className="bg-white dark:bg-slate-800/90 p-2 sm:p-2.5 rounded-xl border border-emerald-500/25 shadow-2xs flex flex-col">
+          <div className="bg-slate-50 dark:bg-[#070818] p-2 sm:p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs flex flex-col">
             <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold">Present</span>
-            <span className="text-base sm:text-xl font-black text-emerald-600 dark:text-emerald-400 mt-0.5">{sessionStats.present}</span>
+            <span className="text-base sm:text-xl font-bold text-emerald-500 dark:text-emerald-400 mt-0.5">{sessionStats.present}</span>
           </div>
 
-          <div className="bg-white dark:bg-slate-800/90 p-2 sm:p-2.5 rounded-xl border border-rose-500/25 shadow-2xs flex flex-col">
+          <div className="bg-slate-50 dark:bg-[#070818] p-2 sm:p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs flex flex-col">
             <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold">Absent</span>
-            <span className="text-base sm:text-xl font-black text-rose-600 dark:text-rose-400 mt-0.5">{sessionStats.absent}</span>
+            <span className="text-base sm:text-xl font-bold text-rose-500 dark:text-rose-400 mt-0.5">{sessionStats.absent}</span>
           </div>
 
-          <div className="bg-white dark:bg-slate-800/90 p-2 sm:p-2.5 rounded-xl border border-amber-500/25 shadow-2xs flex flex-col">
+          <div className="bg-slate-50 dark:bg-[#070818] p-2 sm:p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs flex flex-col">
             <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold">Late</span>
-            <span className="text-base sm:text-xl font-black text-amber-600 dark:text-amber-400 mt-0.5">{sessionStats.late}</span>
+            <span className="text-base sm:text-xl font-bold text-amber-500 dark:text-amber-400 mt-0.5">{sessionStats.late}</span>
           </div>
 
-          <div className="bg-white dark:bg-slate-800/90 p-2 sm:p-2.5 rounded-xl border border-blue-500/25 shadow-2xs flex flex-col">
+          <div className="bg-slate-50 dark:bg-[#070818] p-2 sm:p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs flex flex-col">
             <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold">Excused</span>
-            <span className="text-base sm:text-xl font-black text-blue-600 dark:text-cyan-400 mt-0.5">{sessionStats.excused}</span>
+            <span className="text-base sm:text-xl font-bold text-[#7156a5] dark:text-[#b8a5e5] mt-0.5">{sessionStats.excused}</span>
           </div>
 
-          <div className="col-span-2 sm:col-span-1 bg-white dark:bg-slate-800/90 p-2 sm:p-2.5 rounded-xl border border-slate-300 dark:border-slate-700 shadow-2xs flex flex-col">
+          <div className="col-span-2 sm:col-span-1 bg-slate-50 dark:bg-[#070818] p-2 sm:p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs flex flex-col">
             <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold">Unmarked</span>
-            <span className="text-base sm:text-xl font-black text-slate-600 dark:text-slate-300 mt-0.5">{sessionStats.unmarked}</span>
+            <span className="text-base sm:text-xl font-bold text-slate-700 dark:text-slate-300 mt-0.5">{sessionStats.unmarked}</span>
           </div>
         </div>
       </div>
 
       {/* Filter & Search Bar with View Mode Toggle */}
-      <div className="flex flex-col gap-2.5 bg-white dark:bg-slate-900/90 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+      <div className="flex flex-col gap-2.5 bg-white dark:bg-[#0c0e22] p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
         
         {/* Row 1: Search & View Mode Switcher */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
@@ -790,19 +800,19 @@ export default function AttendanceView({ onSelectStudentHistory }) {
               placeholder={`Search ${selectedSport} players by name, roll no, room...`}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 rounded-xl text-xs sm:text-sm bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 outline-none focus:border-blue-500"
+              className="w-full pl-9 pr-3 py-2 rounded-xl text-xs sm:text-sm bg-slate-50 dark:bg-[#070818] border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 outline-none focus:border-[#7156a5]"
             />
           </div>
 
           {/* View Mode Toggle: Table View (Sticky Name) vs Cards (Touch / Slide) */}
-          <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl border border-slate-200 dark:border-slate-700 self-stretch sm:self-auto justify-center">
+          <div className="flex items-center gap-1 bg-slate-100 dark:bg-[#070818] p-1 rounded-xl border border-slate-200 dark:border-slate-800 self-stretch sm:self-auto justify-center">
             <button
               type="button"
               onClick={() => handleSetViewMode('table')}
-              className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                 viewMode === 'table'
-                  ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-cyan-400 shadow-xs'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                  ? 'bg-[#7156a5] text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
               }`}
             >
               <Table className="w-3.5 h-3.5" />
@@ -811,10 +821,10 @@ export default function AttendanceView({ onSelectStudentHistory }) {
             <button
               type="button"
               onClick={() => handleSetViewMode('cards')}
-              className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                 viewMode === 'cards'
-                  ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-cyan-400 shadow-xs'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                  ? 'bg-[#7156a5] text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
               }`}
             >
               <LayoutGrid className="w-3.5 h-3.5" />
@@ -831,8 +841,8 @@ export default function AttendanceView({ onSelectStudentHistory }) {
             onClick={() => setFilterStrictBySport(prev => !prev)}
             className={`w-full px-3 py-2 rounded-xl text-xs font-bold border flex items-center justify-between cursor-pointer transition-colors ${
               filterStrictBySport
-                ? 'bg-blue-50 dark:bg-blue-950/40 border-blue-300 dark:border-blue-800 text-blue-700 dark:text-cyan-300'
-                : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500'
+                ? 'bg-[#7156a5]/10 dark:bg-[#7156a5]/20 border-[#7156a5]/30 dark:border-[#7156a5]/40 text-[#7156a5] dark:text-[#b8a5e5]'
+                : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400'
             }`}
             title="Toggle between showing only players enrolled in this sport, or all registered students"
           >

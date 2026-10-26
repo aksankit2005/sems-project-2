@@ -286,19 +286,19 @@ _APEX Sports Council / Hostel Sports Desk_`;
 
   return (
     <div className="fixed inset-0 z-[70] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/75 backdrop-blur-md animate-fade-in">
-      <div className="w-full max-w-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col max-h-[92vh] sm:max-h-[88vh] overflow-hidden">
+      <div className="w-full max-w-xl bg-white dark:bg-[#0b1329] border border-slate-200 dark:border-amber-500/30 rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col max-h-[92vh] sm:max-h-[88vh] overflow-hidden">
         
         {/* Sticky Header */}
-        <div className="sticky top-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-5 py-3.5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between z-10 flex-shrink-0">
+        <div className="sticky top-0 bg-white/95 dark:bg-[#0b1329]/95 backdrop-blur-md px-5 py-3.5 border-b border-slate-100 dark:border-amber-500/20 flex items-center justify-between z-10 flex-shrink-0">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-500 text-white flex items-center justify-center font-bold shadow-md shadow-blue-500/20">
-              <Package className="w-5 h-5 text-white" />
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#7156a5] to-amber-500 text-slate-950 flex items-center justify-center font-bold shadow-md shadow-amber-500/20">
+              <Package className="w-5 h-5 text-slate-950" />
             </div>
             <div>
               <h3 className="font-bold text-base sm:text-lg text-slate-900 dark:text-slate-100 flex items-center gap-2">
                 <span>Issue Sports Gear</span>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25">
-                  Multi-Item & WhatsApp
+                <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
+                  APEX Desk
                 </span>
               </h3>
               <p className="text-[11px] text-slate-500 dark:text-slate-400">
@@ -859,7 +859,7 @@ _APEX Sports Council / Hostel Sports Desk_`;
             </div>
 
             {/* Sticky Action Footer (ALWAYS VISIBLE ON PHONE SCREENS) */}
-            <div className="sticky bottom-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-5 py-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-3 z-10 shadow-lg flex-shrink-0">
+            <div className="sticky bottom-0 bg-white/95 dark:bg-[#0b1329]/95 backdrop-blur-md px-5 py-3 border-t border-slate-100 dark:border-amber-500/20 flex items-center justify-end gap-3 z-10 shadow-lg flex-shrink-0">
               <button
                 type="button"
                 onClick={onClose}
@@ -871,9 +871,9 @@ _APEX Sports Council / Hostel Sports Desk_`;
               <button
                 type="submit"
                 disabled={submitting}
-                className="flex-1 sm:flex-initial px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 shadow-md shadow-blue-500/25 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 active:scale-98 text-center"
+                className="flex-1 sm:flex-initial px-6 py-2.5 rounded-xl text-xs sm:text-sm font-black text-slate-950 bg-gradient-to-r from-amber-400 via-[#d2ab45] to-amber-500 hover:from-amber-300 hover:to-amber-400 shadow-md shadow-amber-500/25 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 active:scale-98 text-center"
               >
-                <Send className="w-4 h-4" />
+                <Send className="w-4 h-4 text-slate-950" />
                 <span>{submitting ? 'Issuing...' : 'Confirm & Issue Gear'}</span>
               </button>
             </div>

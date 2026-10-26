@@ -208,21 +208,21 @@ ${studentsFormatted}
 
   return (
     <div className="fixed inset-0 z-[70] bg-slate-950/80 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-5 overflow-hidden animate-fade-in">
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-t-3xl sm:rounded-3xl max-w-3xl w-full max-h-[92vh] sm:max-h-[88vh] overflow-hidden shadow-2xl flex flex-col my-0 sm:my-auto animate-in fade-in zoom-in-95 duration-150">
+      <div className="bg-white dark:bg-[#0b1329] border border-slate-200 dark:border-amber-500/30 rounded-t-3xl sm:rounded-3xl max-w-3xl w-full max-h-[92vh] sm:max-h-[88vh] overflow-hidden shadow-2xl flex flex-col my-0 sm:my-auto animate-in fade-in zoom-in-95 duration-150">
         
         {/* Header */}
-        <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-950/40">
+        <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-amber-500/20 flex items-center justify-between bg-slate-50/50 dark:bg-[#0b1329]/95">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-600 to-blue-600 text-white flex items-center justify-center font-bold shadow-md shadow-cyan-600/20 flex-shrink-0">
-              <ShieldCheck className="w-5 h-5 text-white" />
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#7156a5] to-amber-500 text-slate-950 flex items-center justify-center font-bold shadow-md shadow-amber-500/20 flex-shrink-0">
+              <ShieldCheck className="w-5 h-5 text-slate-950" />
             </div>
             <div className="flex flex-col">
               <div className="flex items-center gap-2">
                 <h2 className="font-bold text-base sm:text-lg text-slate-900 dark:text-slate-100">
                   Day Scholar Sports Gate Pass
                 </h2>
-                <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-700 dark:text-cyan-300 border border-cyan-500/30">
-                  Gate Guard Clearance
+                <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
+                  Gate Clearance
                 </span>
               </div>
               <span className="text-xs text-slate-500 dark:text-slate-400">
@@ -240,18 +240,18 @@ ${studentsFormatted}
         </div>
 
         {/* Sub-Tabs: Build New Pass / Past Passes History */}
-        <div className="flex items-center border-b border-slate-200 dark:border-slate-800 px-4 sm:px-6 bg-white dark:bg-slate-900">
+        <div className="flex items-center border-b border-slate-200 dark:border-slate-800 px-4 sm:px-6 bg-white dark:bg-[#0b1329]">
           <button
             onClick={() => setActiveTab('new')}
             className={`py-3 px-4 text-xs font-bold border-b-2 transition-all cursor-pointer ${
               activeTab === 'new'
-                ? 'border-blue-600 text-blue-600 dark:text-cyan-400'
+                ? 'border-amber-500 text-amber-500 font-black'
                 : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
             }`}
           >
             <span>Create New Gate Pass</span>
             {pendingList.length > 0 && (
-              <span className="ml-2 px-1.5 py-0.5 rounded-full bg-blue-600 text-white text-[10px]">
+              <span className="ml-2 px-1.5 py-0.5 rounded-full bg-amber-500 text-slate-950 font-black text-[10px]">
                 {pendingList.length}
               </span>
             )}
@@ -261,7 +261,7 @@ ${studentsFormatted}
             onClick={() => setActiveTab('history')}
             className={`py-3 px-4 text-xs font-bold border-b-2 transition-all cursor-pointer ${
               activeTab === 'history'
-                ? 'border-blue-600 text-blue-600 dark:text-cyan-400'
+                ? 'border-amber-500 text-amber-500 font-black'
                 : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
             }`}
           >
@@ -618,7 +618,7 @@ ${studentsFormatted}
 
         {/* Modal Footer / Dispatch Actions */}
         {activeTab === 'new' && (
-          <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/50 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+          <div className="p-4 border-t border-slate-100 dark:border-amber-500/20 bg-slate-50/70 dark:bg-[#0b1329]/95 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
             <div className="text-xs text-slate-500 dark:text-slate-400">
               {pendingList.length > 0 ? (
                 <span>Ready to dispatch pass for <strong>{pendingList.length} Day Scholar(s)</strong></span>
@@ -640,9 +640,9 @@ ${studentsFormatted}
                 type="button"
                 onClick={handleSendToGuard}
                 disabled={submitting || pendingList.length === 0}
-                className="flex-1 sm:flex-none px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 shadow-md shadow-emerald-600/25 flex items-center justify-center gap-2 cursor-pointer active:scale-95 disabled:opacity-50"
+                className="flex-1 sm:flex-none px-5 py-2.5 rounded-xl text-xs font-black text-slate-950 bg-gradient-to-r from-amber-400 via-[#d2ab45] to-amber-500 hover:from-amber-300 hover:to-amber-400 shadow-md shadow-amber-500/25 flex items-center justify-center gap-2 cursor-pointer active:scale-95 disabled:opacity-50"
               >
-                <MessageSquare className="w-4 h-4 text-white" />
+                <MessageSquare className="w-4 h-4 text-slate-950" />
                 <span>{submitting ? 'Generating...' : 'Send Gate Pass to Guard (WhatsApp)'}</span>
               </button>
             </div>

@@ -42,12 +42,12 @@ export default function StudentHistoryModal({ student, onClose }) {
 
   return (
     <div className="fixed inset-0 z-[70] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/75 backdrop-blur-md animate-fade-in">
-      <div className="w-full max-w-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col max-h-[92vh] sm:max-h-[88vh] overflow-hidden">
+      <div className="w-full max-w-2xl bg-white dark:bg-[#0b1329] border border-slate-200 dark:border-amber-500/30 rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col max-h-[92vh] sm:max-h-[88vh] overflow-hidden">
         
         {/* Sticky Header */}
-        <div className="sticky top-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-start justify-between z-10 flex-shrink-0">
+        <div className="sticky top-0 bg-white/95 dark:bg-[#0b1329]/95 backdrop-blur-md px-5 py-4 border-b border-slate-100 dark:border-amber-500/20 flex items-start justify-between z-10 flex-shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-700 text-white flex items-center justify-center font-bold text-lg shadow-md flex-shrink-0">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#7156a5] to-amber-500 text-slate-950 flex items-center justify-center font-black text-lg shadow-md flex-shrink-0">
               {student.name.split(' ').map(n => n[0]).join('')}
             </div>
             <div className="flex flex-col">
@@ -55,9 +55,10 @@ export default function StudentHistoryModal({ student, onClose }) {
                 <h3 className="font-bold text-lg text-slate-900 dark:text-slate-100">
                   {student.name}
                 </h3>
-                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-cyan-400 border border-blue-500/20">
+                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30">
                   {student.gender}
                 </span>
+
               </div>
               <span className="font-mono text-xs text-slate-400">
                 Roll No: {student.rollNumber}

@@ -86,13 +86,13 @@ export default function ReportsView() {
     <div className="flex flex-col gap-6">
       
       {/* Top Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-[#0c0e22] border border-slate-200 dark:border-slate-800 p-4 rounded-2xl shadow-sm">
         <div>
-          <h2 className="font-bold text-lg text-slate-900 dark:text-slate-100 flex items-center gap-2">
-            <BarChart3 className="w-5 h-5 text-blue-600" />
-            Hostel Sports Analytics & Attendance Reports
+          <h2 className="font-bold text-lg text-slate-900 dark:text-white flex items-center gap-2">
+            <BarChart3 className="w-5 h-5 text-[#7156a5] dark:text-[#b8a5e5]" />
+            <span>Hostel Sports Analytics & Attendance Reports</span>
           </h2>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
             Turnout statistics, residency distribution, overdue equipment tracking, and CSV exports.
           </p>
         </div>
@@ -100,30 +100,31 @@ export default function ReportsView() {
         <div className="flex items-center gap-2 flex-wrap">
           <button
             onClick={() => window.print()}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition-all cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-[#12152e] dark:hover:bg-[#1a1e3d] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 transition-all cursor-pointer"
           >
-            <Printer className="w-4 h-4" />
+            <Printer className="w-4 h-4 text-slate-400" />
             <span>Print Report</span>
           </button>
 
           <button
             onClick={() => exportStudentsCSV(students)}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 shadow-md shadow-emerald-600/25 transition-all cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-white bg-[#7156a5] hover:bg-[#5e458e] shadow-xs transition-all cursor-pointer active:scale-95"
           >
-            <Download className="w-4 h-4" />
-            <span>Export Roster</span>
+            <Download className="w-4 h-4 text-white" />
+            <span>Export Roster (CSV)</span>
           </button>
         </div>
       </div>
 
       {/* QUICK EXPORT CENTER (One-click downloads for all system data) */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col gap-3">
+      <div className="bg-white dark:bg-[#0c0e22] border border-slate-200 dark:border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col gap-3">
+
         <div className="flex items-center justify-between">
-          <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100 flex items-center gap-2">
-            <Download className="w-4 h-4 text-emerald-500" />
+          <h3 className="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
+            <Download className="w-4 h-4 text-[#7156a5] dark:text-[#b8a5e5]" />
             <span>Universal Report Export Center (CSV / Excel Format)</span>
           </h3>
-          <span className="text-[11px] font-semibold text-slate-400">Instant 1-Click File Downloads</span>
+          <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400">Instant 1-Click File Downloads</span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -131,77 +132,77 @@ export default function ReportsView() {
           {/* Card 1: Students & Attendance */}
           <button
             onClick={() => exportStudentsCSV(students)}
-            className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 hover:border-emerald-500 flex items-center justify-between transition-all cursor-pointer text-left group"
+            className="p-3.5 rounded-xl bg-slate-50 hover:bg-slate-100 dark:bg-[#070818] dark:hover:bg-[#12152e] border border-slate-200 dark:border-slate-800 hover:border-[#7156a5]/50 flex items-center justify-between transition-all cursor-pointer text-left group shadow-2xs"
           >
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center font-bold">
+              <div className="w-9 h-9 rounded-lg bg-[#7156a5]/10 dark:bg-[#7156a5]/15 text-[#7156a5] dark:text-[#b8a5e5] border border-[#7156a5]/30 flex items-center justify-center font-bold">
                 <Users className="w-4 h-4" />
               </div>
               <div className="flex flex-col">
-                <span className="font-bold text-xs text-slate-800 dark:text-slate-200 group-hover:text-emerald-500">
+                <span className="font-semibold text-xs text-slate-900 dark:text-white group-hover:text-[#7156a5] dark:group-hover:text-[#b8a5e5] transition-colors">
                   Students Roster
                 </span>
-                <span className="text-[10px] text-slate-400">Attendance % & Room info</span>
+                <span className="text-[10px] text-slate-500 dark:text-slate-400">Attendance % & Room info</span>
               </div>
             </div>
-            <Download className="w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-500" />
+            <Download className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#7156a5] dark:group-hover:text-[#b8a5e5] transition-colors" />
           </button>
 
           {/* Card 2: Issued Gear Loans */}
           <button
             onClick={() => exportLoansCSV(loans)}
-            className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 hover:border-blue-500 flex items-center justify-between transition-all cursor-pointer text-left group"
+            className="p-3.5 rounded-xl bg-slate-50 hover:bg-slate-100 dark:bg-[#070818] dark:hover:bg-[#12152e] border border-slate-200 dark:border-slate-800 hover:border-[#7156a5]/50 flex items-center justify-between transition-all cursor-pointer text-left group shadow-2xs"
           >
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-blue-500/10 text-blue-600 flex items-center justify-center font-bold">
+              <div className="w-9 h-9 rounded-lg bg-[#7156a5]/10 dark:bg-[#7156a5]/15 text-[#7156a5] dark:text-[#b8a5e5] border border-[#7156a5]/30 flex items-center justify-center font-bold">
                 <Clock className="w-4 h-4" />
               </div>
               <div className="flex flex-col">
-                <span className="font-bold text-xs text-slate-800 dark:text-slate-200 group-hover:text-blue-500">
+                <span className="font-semibold text-xs text-slate-900 dark:text-white group-hover:text-[#7156a5] dark:group-hover:text-[#b8a5e5] transition-colors">
                   Issued Equipment
                 </span>
-                <span className="text-[10px] text-slate-400">All loans & returns</span>
+                <span className="text-[10px] text-slate-500 dark:text-slate-400">All loans & returns</span>
               </div>
             </div>
-            <Download className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-500" />
+            <Download className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#7156a5] dark:group-hover:text-[#b8a5e5] transition-colors" />
           </button>
 
           {/* Card 3: Master Inventory */}
           <button
             onClick={() => exportInventoryCSV(equipment)}
-            className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 hover:border-purple-500 flex items-center justify-between transition-all cursor-pointer text-left group"
+            className="p-3.5 rounded-xl bg-slate-50 hover:bg-slate-100 dark:bg-[#070818] dark:hover:bg-[#12152e] border border-slate-200 dark:border-slate-800 hover:border-[#7156a5]/50 flex items-center justify-between transition-all cursor-pointer text-left group shadow-2xs"
           >
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-purple-500/10 text-purple-600 flex items-center justify-center font-bold">
+              <div className="w-9 h-9 rounded-lg bg-[#7156a5]/10 dark:bg-[#7156a5]/15 text-[#7156a5] dark:text-[#b8a5e5] border border-[#7156a5]/30 flex items-center justify-center font-bold">
                 <Package className="w-4 h-4" />
               </div>
               <div className="flex flex-col">
-                <span className="font-bold text-xs text-slate-800 dark:text-slate-200 group-hover:text-purple-500">
+                <span className="font-semibold text-xs text-slate-900 dark:text-white group-hover:text-[#7156a5] dark:group-hover:text-[#b8a5e5] transition-colors">
                   Inventory Stock
                 </span>
-                <span className="text-[10px] text-slate-400">Stock & locations</span>
+                <span className="text-[10px] text-slate-500 dark:text-slate-400">Stock & locations</span>
               </div>
             </div>
-            <Download className="w-3.5 h-3.5 text-slate-400 group-hover:text-purple-500" />
+            <Download className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#7156a5] dark:group-hover:text-[#b8a5e5] transition-colors" />
           </button>
 
           {/* Card 4: Overdue Defaulters */}
           <button
             onClick={handleExportOverdueCSV}
-            className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 hover:border-rose-500 flex items-center justify-between transition-all cursor-pointer text-left group"
+            className="p-3.5 rounded-xl bg-slate-50 hover:bg-slate-100 dark:bg-[#070818] dark:hover:bg-[#12152e] border border-slate-200 dark:border-slate-800 hover:border-rose-500/50 flex items-center justify-between transition-all cursor-pointer text-left group shadow-2xs"
           >
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-rose-500/10 text-rose-600 flex items-center justify-center font-bold">
+              <div className="w-9 h-9 rounded-lg bg-rose-500/10 text-rose-500 dark:text-rose-400 border border-rose-500/30 flex items-center justify-center font-bold">
                 <AlertTriangle className="w-4 h-4" />
               </div>
               <div className="flex flex-col">
-                <span className="font-bold text-xs text-slate-800 dark:text-slate-200 group-hover:text-rose-500">
+                <span className="font-semibold text-xs text-slate-900 dark:text-white group-hover:text-rose-500 transition-colors">
                   Overdue Defaulters
                 </span>
-                <span className="text-[10px] text-slate-400">{overdueLoans.length} Unreturned gear</span>
+                <span className="text-[10px] text-slate-500 dark:text-slate-400">{overdueLoans.length} Unreturned gear</span>
               </div>
             </div>
-            <Download className="w-3.5 h-3.5 text-slate-400 group-hover:text-rose-500" />
+            <Download className="w-3.5 h-3.5 text-slate-400 group-hover:text-rose-500 transition-colors" />
           </button>
 
         </div>
