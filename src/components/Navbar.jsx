@@ -9,11 +9,13 @@ import {
   Package, 
   Users, 
   BarChart3,
-  ShieldCheck 
+  ShieldCheck,
+  LogOut,
+  UserCheck
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 
-export default function Navbar({ activeTab, setActiveTab, onOpenIssueModal, onOpenGatePassModal }) {
+export default function Navbar({ activeTab, setActiveTab, onOpenIssueModal, onOpenGatePassModal, currentUser, onLogout }) {
   const { isDark, toggleTheme } = useTheme();
 
   const navLinks = [
@@ -117,6 +119,18 @@ export default function Navbar({ activeTab, setActiveTab, onOpenIssueModal, onOp
                 <Moon className="w-4 h-4 text-blue-600 transition-transform hover:-rotate-12" />
               )}
             </button>
+
+            {/* Logout Button */}
+            {onLogout && (
+              <button
+                type="button"
+                onClick={onLogout}
+                title="Lock & Logout (sems_campus)"
+                className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900/50 transition-all duration-150 cursor-pointer active:scale-90 shadow-2xs"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            )}
           </div>
 
         </div>

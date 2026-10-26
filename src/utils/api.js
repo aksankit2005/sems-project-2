@@ -1,6 +1,8 @@
 // API service helper with automated fallback to localStorage for bulletproof offline & online support
 
-const API_BASE = '/api';
+// Supports custom backend URL when deployed on Vercel (e.g. VITE_API_URL=https://my-backend.onrender.com)
+const BASE_URL = (import.meta.env.VITE_API_URL || '').replace(/\/+$/, '');
+const API_BASE = BASE_URL ? `${BASE_URL}/api` : '/api';
 
 export const api = {
   // Sports config

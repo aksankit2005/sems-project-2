@@ -10,6 +10,7 @@ import ReportsView from './components/ReportsView';
 import IssueGearModal from './components/IssueGearModal';
 import StudentHistoryModal from './components/StudentHistoryModal';
 import DayScholarPassModal from './components/DayScholarPassModal';
+import LoginScreen from './components/LoginScreen';
 import { api } from './utils/api';
 import { 
   Trophy, 
@@ -261,6 +262,21 @@ function DashboardHome({ stats, setActiveTab, onOpenIssueModal, onOpenGatePassMo
 }
 
 export function AppContent() {
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      const stored = localStorage.getItem('sems_auth_user') || sessionStorage.getItem('sems_auth_user');
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
+  });
+
+  const handleLogout = () => {
+    localStorage.removeItem('sems_auth_user');
+    sessionStorage.removeItem('sems_auth_user');
+    setCurrentUser(null);
+  };
+
   const [activeTab, setActiveTab] = useState('dashboard');
   const [stats, setStats] = useState({});
   const [isIssueModalOpen, setIsIssueModalOpen] = useState(false);
@@ -275,8 +291,15 @@ export function AppContent() {
   };
 
   useEffect(() => {
-    fetchStats();
-  }, [activeTab, refreshKey]);
+    if (currentUser) {
+      fetchStats();
+    }
+  }, [activeTab, refreshKey, currentUser]);
+
+  // Security Guard: If not authenticated, render ONLY the protected LoginScreen
+  if (!currentUser) {
+    return <LoginScreen onLoginSuccess={(user) => setCurrentUser(user)} />;
+  }
 
   return (
     <div className="min-h-screen flex flex-col justify-between bg-slate-50 dark:bg-[#020617] text-slate-900 dark:text-slate-100 transition-colors duration-250">
@@ -287,6 +310,8 @@ export function AppContent() {
         setActiveTab={setActiveTab}
         onOpenIssueModal={() => setIsIssueModalOpen(true)}
         onOpenGatePassModal={() => setIsGatePassModalOpen(true)}
+        currentUser={currentUser}
+        onLogout={handleLogout}
       />
 
       {/* Main Container */}

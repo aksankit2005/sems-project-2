@@ -40,6 +40,39 @@ const SPORTS_CONFIG = [
   { id: 'athletics', name: 'Athletics', icon: '🏃', category: 'Track & Field', defaultPlayers: 1 },
 ];
 
+// Health check endpoints (for Render, uptime monitors)
+app.get('/', (req, res) => {
+  res.json({
+    status: 'online',
+    service: 'MPGI APEX Sports System API',
+    uptime: process.uptime(),
+    dbConnected: isDatabaseConnected()
+  });
+});
+
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok', db: isDatabaseConnected() });
+});
+
+// POST /api/auth/login (Backend authentication endpoint)
+app.post('/api/auth/login', (req, res) => {
+  const { username, password } = req.body || {};
+  if (username === 'sems_campus' && password === 'Sems#1234') {
+    return res.json({
+      success: true,
+      user: {
+        username: 'sems_campus',
+        role: 'Sports Coordinator & Hostel Warden',
+        token: `auth_${Date.now()}`
+      }
+    });
+  }
+  return res.status(401).json({
+    success: false,
+    message: 'Invalid campus credentials'
+  });
+});
+
 // GET /api/sports
 app.get('/api/sports', (req, res) => {
   res.json({ sports: SPORTS_CONFIG });

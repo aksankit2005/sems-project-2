@@ -10,25 +10,45 @@ const { Pool } = pg;
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Configuration from environment variables
-const poolConfig = process.env.PGPASSWORD
-  ? {
+// Supports Supabase, Neon, Render, Railway and local PostgreSQL
+function buildPoolConfig() {
+  if (process.env.DATABASE_URL) {
+    const isCloudDb = 
+      process.env.NODE_ENV === 'production' || 
+      process.env.DATABASE_URL.includes('supabase') || 
+      process.env.DATABASE_URL.includes('render') || 
+      process.env.DATABASE_URL.includes('neon') || 
+      process.env.DATABASE_URL.includes('aws') ||
+      process.env.PGSSL === 'true';
+
+    return {
+      connectionString: process.env.DATABASE_URL,
+      ...(isCloudDb ? { ssl: { rejectUnauthorized: false } } : {})
+    };
+  }
+
+  if (process.env.PGPASSWORD) {
+    const isCloudHost = process.env.PGHOST && process.env.PGHOST !== 'localhost' && process.env.PGHOST !== '127.0.0.1';
+    return {
       host: process.env.PGHOST || 'localhost',
       port: Number(process.env.PGPORT || 5432),
       user: process.env.PGUSER || 'postgres',
       password: process.env.PGPASSWORD,
-      database: process.env.PGDATABASE || 'sems_db'
-    }
-  : (process.env.DATABASE_URL
-      ? { connectionString: process.env.DATABASE_URL }
-      : {
-          host: 'localhost',
-          port: 5432,
-          user: 'postgres',
-          password: 'postgres',
-          database: 'sems_db'
-        });
+      database: process.env.PGDATABASE || 'sems_db',
+      ...((isCloudHost || process.env.PGSSL === 'true') ? { ssl: { rejectUnauthorized: false } } : {})
+    };
+  }
 
-export const pool = new Pool(poolConfig);
+  return {
+    host: 'localhost',
+    port: 5432,
+    user: 'postgres',
+    password: 'postgres',
+    database: 'sems_db'
+  };
+}
+
+export const pool = new Pool(buildPoolConfig());
 
 let isPgConnected = false;
 
