@@ -41,11 +41,11 @@ export default function StudentHistoryModal({ student, onClose }) {
   const history = historyData?.history || [];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/65 backdrop-blur-sm animate-fade-in">
-      <div className="w-full max-w-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl flex flex-col gap-5 max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-[70] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/75 backdrop-blur-md animate-fade-in">
+      <div className="w-full max-w-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col max-h-[92vh] sm:max-h-[88vh] overflow-hidden">
         
-        {/* Header */}
-        <div className="flex items-start justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
+        {/* Sticky Header */}
+        <div className="sticky top-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-start justify-between z-10 flex-shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-700 text-white flex items-center justify-center font-bold text-lg shadow-md flex-shrink-0">
               {student.name.split(' ').map(n => n[0]).join('')}
@@ -66,12 +66,16 @@ export default function StudentHistoryModal({ student, onClose }) {
           </div>
 
           <button 
+            type="button"
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xl cursor-pointer p-1"
+            className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 text-lg cursor-pointer transition-colors"
           >
             ✕
           </button>
         </div>
+
+        {/* Scrollable Body */}
+        <div className="overflow-y-auto p-4 sm:p-6 space-y-4 flex-1 overscroll-contain">
 
         {/* Residency & Hostel Banner */}
         <div className="bg-slate-50 dark:bg-slate-800/60 p-3.5 rounded-2xl flex flex-wrap items-center justify-between gap-3 text-xs">
@@ -208,12 +212,14 @@ export default function StudentHistoryModal({ student, onClose }) {
             </div>
           )}
         </div>
+        </div>
 
-        {/* Modal Footer */}
-        <div className="flex items-center justify-end pt-2 border-t border-slate-100 dark:border-slate-800">
+        {/* Sticky Action Footer */}
+        <div className="sticky bottom-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-5 py-3.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end z-10 shadow-lg flex-shrink-0">
           <button
+            type="button"
             onClick={onClose}
-            className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-slate-900 hover:bg-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700 transition-colors cursor-pointer text-center"
+            className="w-full sm:w-auto px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-slate-900 hover:bg-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700 transition-colors cursor-pointer text-center"
           >
             Close Drill-Down Log
           </button>

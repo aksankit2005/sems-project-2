@@ -17,7 +17,7 @@ export default function MobileBottomNav({ activeTab, setActiveTab }) {
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden backdrop-blur-xl bg-white/95 dark:bg-[#020617]/95 border-t border-slate-200 dark:border-slate-800 px-2 pt-1.5 pb-[max(0.5rem,env(safe-area-inset-bottom))] shadow-lg shadow-black/10 transition-colors">
+    <div className="fixed bottom-0 left-0 right-0 z-30 md:hidden backdrop-blur-xl bg-white/95 dark:bg-[#020617]/95 border-t border-slate-200 dark:border-slate-800 px-2 pt-1.5 pb-[max(0.6rem,env(safe-area-inset-bottom))] shadow-lg shadow-black/10 transition-colors">
       <div className="flex items-center justify-around max-w-md mx-auto">
         {tabs.map((tab) => {
           const Icon = tab.icon;

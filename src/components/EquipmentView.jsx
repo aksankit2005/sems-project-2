@@ -1320,88 +1320,93 @@ _MPGI Sports Desk_`;
 
       {/* MODAL 1: RETURN EQUIPMENT VERIFICATION */}
       {returnModalLoan && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/65 backdrop-blur-sm animate-fade-in">
-          <div className="w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl flex flex-col gap-4">
+        <div className="fixed inset-0 z-[70] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/75 backdrop-blur-md animate-fade-in">
+          <div className="w-full max-w-md bg-white dark:bg-slate-900 border-t sm:border border-slate-200 dark:border-slate-800 rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
             
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+            <div className="sticky top-0 z-10 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
               <h3 className="font-bold text-base text-slate-900 dark:text-slate-100 flex items-center gap-2">
                 <RotateCcw className="w-4 h-4 text-blue-600" />
                 Return Sports Equipment
               </h3>
               <button 
                 onClick={() => setReturnModalLoan(null)}
-                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-lg cursor-pointer"
+                className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
               >
                 ✕
               </button>
             </div>
 
-            <div className="bg-slate-50 dark:bg-slate-800/60 p-3 rounded-2xl flex flex-col gap-1 text-xs">
-              <span className="font-bold text-slate-800 dark:text-slate-200">{returnModalLoan.equipmentName}</span>
-              <span className="text-slate-500">Borrower: <strong>{returnModalLoan.studentName}</strong> (Room {returnModalLoan.roomNumber}, {returnModalLoan.hostelName})</span>
-              <span className="text-slate-500">Total units to return: <strong>{returnModalLoan.quantity}</strong> item(s)</span>
-            </div>
+            <div className="p-5 overflow-y-auto flex-1 flex flex-col gap-4">
+              <div className="bg-slate-50 dark:bg-slate-800/60 p-3 rounded-2xl flex flex-col gap-1 text-xs">
+                <span className="font-bold text-slate-800 dark:text-slate-200">{returnModalLoan.equipmentName}</span>
+                <span className="text-slate-500">Borrower: <strong>{returnModalLoan.studentName}</strong> (Room {returnModalLoan.roomNumber}, {returnModalLoan.hostelName})</span>
+                <span className="text-slate-500">Total units to return: <strong>{returnModalLoan.quantity}</strong> item(s)</span>
+              </div>
 
-            {/* Condition Check */}
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-slate-600 dark:text-slate-300">
-                Equipment Condition on Return
-              </label>
-              <select
-                value={returnCondition}
-                onChange={(e) => setReturnCondition(e.target.value)}
-                className="px-3 py-2 rounded-xl text-xs sm:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 outline-none"
-              >
-                <option value="Good">🟢 Good / Intact (Ready for reuse)</option>
-                <option value="Fair">🟡 Fair / Minor Wear</option>
-                <option value="Damaged">🔴 Damaged (Needs Repair / Warden Note)</option>
-                <option value="Lost">❌ Lost / Replacement Required</option>
-              </select>
-            </div>
+              {/* Condition Check */}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-bold text-slate-600 dark:text-slate-300">
+                  Equipment Condition on Return
+                </label>
+                <select
+                  value={returnCondition}
+                  onChange={(e) => setReturnCondition(e.target.value)}
+                  className="px-3 py-2 rounded-xl text-xs sm:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 outline-none"
+                >
+                  <option value="Good">🟢 Good / Intact (Ready for reuse)</option>
+                  <option value="Fair">🟡 Fair / Minor Wear</option>
+                  <option value="Damaged">🔴 Damaged (Needs Repair / Warden Note)</option>
+                  <option value="Lost">❌ Lost / Replacement Required</option>
+                </select>
+              </div>
 
-            {/* Condition Notes */}
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-slate-600 dark:text-slate-300">
-                Condition Notes (Optional)
-              </label>
-              <input
-                type="text"
-                placeholder="e.g. Returned with ball pressure good, clean grip"
-                value={returnNotes}
-                onChange={(e) => setReturnNotes(e.target.value)}
-                className="px-3 py-2 rounded-xl text-xs sm:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 outline-none"
-              />
-            </div>
-
-            {/* WhatsApp Return Confirmation Checkbox */}
-            {returnModalLoan.phone && (
-              <div className="bg-emerald-500/10 border border-emerald-500/30 p-3 rounded-xl flex items-center justify-between text-xs">
-                <div className="flex items-center gap-2">
-                  <MessageSquare className="w-4 h-4 text-[#25D366]" />
-                  <span className="font-semibold text-slate-800 dark:text-slate-200">
-                    Send WhatsApp Return Receipt to +91 {returnModalLoan.phone}
-                  </span>
-                </div>
+              {/* Condition Notes */}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-bold text-slate-600 dark:text-slate-300">
+                  Condition Notes (Optional)
+                </label>
                 <input
-                  type="checkbox"
-                  checked={sendReturnWhatsApp}
-                  onChange={(e) => setSendReturnWhatsApp(e.target.checked)}
-                  className="w-4 h-4 text-emerald-600 rounded cursor-pointer"
+                  type="text"
+                  placeholder="e.g. Returned with ball pressure good, clean grip"
+                  value={returnNotes}
+                  onChange={(e) => setReturnNotes(e.target.value)}
+                  className="px-3 py-2 rounded-xl text-xs sm:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 outline-none"
                 />
               </div>
-            )}
 
-            <div className="flex items-center justify-end gap-2.5 pt-2">
+              {/* WhatsApp Return Confirmation Checkbox */}
+              {returnModalLoan.phone && (
+                <div className="bg-emerald-500/10 border border-emerald-500/30 p-3 rounded-xl flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-2">
+                    <MessageSquare className="w-4 h-4 text-[#25D366]" />
+                    <span className="font-semibold text-slate-800 dark:text-slate-200">
+                      Send WhatsApp Return Receipt to +91 {returnModalLoan.phone}
+                    </span>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={sendReturnWhatsApp}
+                    onChange={(e) => setSendReturnWhatsApp(e.target.checked)}
+                    className="w-4 h-4 text-emerald-600 rounded cursor-pointer"
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Sticky Footer */}
+            <div className="sticky bottom-0 z-10 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-5 py-3.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-2.5">
               <button
+                type="button"
                 onClick={() => setReturnModalLoan(null)}
-                className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer"
+                className="px-4 py-2.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer min-h-[42px]"
               >
                 Cancel
               </button>
               <button
+                type="button"
                 onClick={handleConfirmReturn}
                 disabled={returning}
-                className="px-5 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 shadow-md shadow-emerald-600/30 cursor-pointer"
+                className="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 shadow-md shadow-emerald-600/30 cursor-pointer min-h-[42px]"
               >
                 {returning ? 'Verifying...' : 'Confirm Return & Restore Stock'}
               </button>
@@ -1413,12 +1418,12 @@ _MPGI Sports Desk_`;
 
       {/* MODAL 2: ADD NEW EQUIPMENT */}
       {showAddEqModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+        <div className="fixed inset-0 z-[70] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/75 backdrop-blur-md animate-fade-in">
           <form 
             onSubmit={handleAddEquipment}
-            className="w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl flex flex-col gap-4"
+            className="w-full max-w-md bg-white dark:bg-slate-900 border-t sm:border border-slate-200 dark:border-slate-800 rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden"
           >
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+            <div className="sticky top-0 z-10 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
               <h3 className="font-bold text-base text-slate-900 dark:text-slate-100 flex items-center gap-2">
                 <Package className="w-4 h-4 text-blue-600" />
                 Add New Sports Equipment
@@ -1426,71 +1431,73 @@ _MPGI Sports Desk_`;
               <button 
                 type="button"
                 onClick={() => setShowAddEqModal(false)}
-                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-lg cursor-pointer"
+                className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
               >
                 ✕
               </button>
             </div>
 
-            <div className="flex flex-col gap-1">
-              <label className="text-xs font-bold text-slate-600 dark:text-slate-300">Equipment Name</label>
-              <input
-                type="text"
-                placeholder="e.g. Cosco Super Volleyball"
-                value={newEqName}
-                onChange={(e) => setNewEqName(e.target.value)}
-                required
-                className="px-3 py-2 rounded-xl text-xs sm:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 outline-none"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
+            <div className="p-5 overflow-y-auto flex-1 flex flex-col gap-4">
               <div className="flex flex-col gap-1">
-                <label className="text-xs font-bold text-slate-600 dark:text-slate-300">Sport Discipline</label>
-                <select
-                  value={newEqSport}
-                  onChange={(e) => setNewEqSport(e.target.value)}
-                  className="px-3 py-2 rounded-xl text-xs sm:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 outline-none"
-                >
-                  {sportsList.map(s => <option key={s} value={s}>{s}</option>)}
-                </select>
+                <label className="text-xs font-bold text-slate-600 dark:text-slate-300">Equipment Name</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Cosco Super Volleyball"
+                  value={newEqName}
+                  onChange={(e) => setNewEqName(e.target.value)}
+                  required
+                  className="px-3 py-2.5 rounded-xl text-xs sm:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 outline-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-bold text-slate-600 dark:text-slate-300">Sport Discipline</label>
+                  <select
+                    value={newEqSport}
+                    onChange={(e) => setNewEqSport(e.target.value)}
+                    className="px-3 py-2.5 rounded-xl text-xs sm:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 outline-none"
+                  >
+                    {sportsList.map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                </div>
+
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-bold text-slate-600 dark:text-slate-300">Total Quantity</label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="100"
+                    value={newEqQty}
+                    onChange={(e) => setNewEqQty(e.target.value)}
+                    className="px-3 py-2.5 rounded-xl text-xs sm:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 outline-none"
+                  />
+                </div>
               </div>
 
               <div className="flex flex-col gap-1">
-                <label className="text-xs font-bold text-slate-600 dark:text-slate-300">Total Quantity</label>
+                <label className="text-xs font-bold text-slate-600 dark:text-slate-300">Storage Location</label>
                 <input
-                  type="number"
-                  min="1"
-                  max="100"
-                  value={newEqQty}
-                  onChange={(e) => setNewEqQty(e.target.value)}
-                  className="px-3 py-2 rounded-xl text-xs sm:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 outline-none"
+                  type="text"
+                  placeholder="e.g. Hostel Sports Room Locker 4"
+                  value={newEqLocation}
+                  onChange={(e) => setNewEqLocation(e.target.value)}
+                  className="px-3 py-2.5 rounded-xl text-xs sm:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 outline-none"
                 />
               </div>
             </div>
 
-            <div className="flex flex-col gap-1">
-              <label className="text-xs font-bold text-slate-600 dark:text-slate-300">Storage Location</label>
-              <input
-                type="text"
-                placeholder="e.g. Hostel Sports Room Locker 4"
-                value={newEqLocation}
-                onChange={(e) => setNewEqLocation(e.target.value)}
-                className="px-3 py-2 rounded-xl text-xs sm:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 outline-none"
-              />
-            </div>
-
-            <div className="flex items-center justify-end gap-2.5 pt-2">
+            <div className="sticky bottom-0 z-10 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-5 py-3.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-2.5">
               <button
                 type="button"
                 onClick={() => setShowAddEqModal(false)}
-                className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer"
+                className="px-4 py-2.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer min-h-[42px]"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-5 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 shadow-md shadow-blue-500/25 cursor-pointer"
+                className="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 shadow-md shadow-blue-500/25 cursor-pointer min-h-[42px]"
               >
                 Save Equipment
               </button>
@@ -1501,9 +1508,9 @@ _MPGI Sports Desk_`;
 
       {/* Modal: View Handover Verification Photo (Admin Inspection) */}
       {viewingPhotoLoan && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl flex flex-col animate-in fade-in zoom-in-95 duration-150">
-            <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+        <div className="fixed inset-0 z-[70] bg-slate-950/80 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fade-in">
+          <div className="bg-white dark:bg-slate-900 border-t sm:border border-slate-200 dark:border-slate-800 rounded-t-3xl sm:rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+            <div className="sticky top-0 z-10 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Camera className="w-4 h-4 text-blue-600 dark:text-cyan-400" />
                 <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100">
@@ -1512,22 +1519,22 @@ _MPGI Sports Desk_`;
               </div>
               <button 
                 onClick={() => setViewingPhotoLoan(null)}
-                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-lg cursor-pointer px-2"
+                className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
               >
                 ✕
               </button>
             </div>
 
-            <div className="p-4 flex flex-col gap-3">
-              <div className="relative rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-950 max-h-[340px] flex items-center justify-center">
+            <div className="p-5 overflow-y-auto flex-1 flex flex-col gap-3">
+              <div className="relative rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-950 max-h-[300px] sm:max-h-[340px] flex items-center justify-center">
                 <img 
                   src={viewingPhotoLoan.handoverPhoto} 
                   alt="Handover verification" 
-                  className="w-full h-auto max-h-[340px] object-contain"
+                  className="w-full h-auto max-h-[300px] sm:max-h-[340px] object-contain"
                 />
               </div>
 
-              <div className="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl border border-slate-200/60 dark:border-slate-700/60 text-xs flex flex-col gap-1.5">
+              <div className="bg-slate-50 dark:bg-slate-800/50 p-3.5 rounded-xl border border-slate-200/60 dark:border-slate-700/60 text-xs flex flex-col gap-1.5">
                 <div className="flex items-center justify-between">
                   <span className="text-slate-500 dark:text-slate-400">Borrower:</span>
                   <span className="font-bold text-slate-900 dark:text-slate-100">{viewingPhotoLoan.studentName} ({viewingPhotoLoan.studentId})</span>
@@ -1547,31 +1554,31 @@ _MPGI Sports Desk_`;
                   </span>
                 </div>
               </div>
+            </div>
 
-              <div className="flex items-center justify-end gap-2 pt-1">
-                {viewingPhotoLoan.phone && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const clean = viewingPhotoLoan.phone.replace(/\D/g, '');
-                      const full = clean.length === 10 ? `91${clean}` : clean;
-                      const txt = `🏆 *APEX SPORTS FEST 2026*\n\nHello *${viewingPhotoLoan.studentName}*, your handover photo verification for *${viewingPhotoLoan.equipmentName}* is confirmed on the Hostel Sports Store Desk.\n\n_Sports Desk_`;
-                      window.open(`https://api.whatsapp.com/send?phone=${full}&text=${encodeURIComponent(txt)}`, '_blank');
-                    }}
-                    className="px-4 py-2 rounded-xl text-xs font-bold text-emerald-700 dark:text-[#25D366] bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-500/30 flex items-center gap-1.5 cursor-pointer"
-                  >
-                    <MessageSquare className="w-3.5 h-3.5" />
-                    <span>WhatsApp</span>
-                  </button>
-                )}
+            <div className="sticky bottom-0 z-10 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-5 py-3.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-2.5">
+              {viewingPhotoLoan.phone && (
                 <button
                   type="button"
-                  onClick={() => setViewingPhotoLoan(null)}
-                  className="px-5 py-2 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 cursor-pointer"
+                  onClick={() => {
+                    const clean = viewingPhotoLoan.phone.replace(/\D/g, '');
+                    const full = clean.length === 10 ? `91${clean}` : clean;
+                    const txt = `🏆 *APEX SPORTS FEST 2026*\n\nHello *${viewingPhotoLoan.studentName}*, your handover photo verification for *${viewingPhotoLoan.equipmentName}* is confirmed on the Hostel Sports Store Desk.\n\n_Sports Desk_`;
+                    window.open(`https://api.whatsapp.com/send?phone=${full}&text=${encodeURIComponent(txt)}`, '_blank');
+                  }}
+                  className="px-4 py-2.5 rounded-xl text-xs font-bold text-emerald-700 dark:text-[#25D366] bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-500/30 flex items-center gap-1.5 cursor-pointer min-h-[42px]"
                 >
-                  Close
+                  <MessageSquare className="w-3.5 h-3.5" />
+                  <span>WhatsApp</span>
                 </button>
-              </div>
+              )}
+              <button
+                type="button"
+                onClick={() => setViewingPhotoLoan(null)}
+                className="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 cursor-pointer min-h-[42px]"
+              >
+                Close
+              </button>
             </div>
           </div>
         </div>
@@ -1579,30 +1586,33 @@ _MPGI Sports Desk_`;
 
       {/* MODAL 3: SPORT-FIRST STOCK ARRIVAL (User Voice Note: "pehle puche kis game ka hai, aur pura list banaye") */}
       {showBatchAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/70 backdrop-blur-sm animate-fade-in">
+        <div className="fixed inset-0 z-[70] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/75 backdrop-blur-md animate-fade-in">
           <form 
             onSubmit={handleSaveBatchEquipment}
-            className="w-full max-w-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-4 sm:p-6 shadow-2xl flex flex-col gap-4 max-h-[92vh] overflow-y-auto"
+            className="w-full max-w-3xl bg-white dark:bg-slate-900 border-t sm:border border-slate-200 dark:border-slate-800 rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col max-h-[92vh] overflow-hidden"
           >
             {/* Header */}
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+            <div className="sticky top-0 z-10 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-4 sm:px-6 py-3.5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
               <div>
                 <h3 className="font-bold text-base sm:text-lg text-slate-900 dark:text-slate-100 flex items-center gap-2">
                   <ListPlus className="w-5 h-5 text-blue-600 dark:text-cyan-400" />
-                  <span>Receive New Stock Delivery (New Gear Arrival)</span>
+                  <span>Receive New Stock Delivery</span>
                 </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                  First select the game/sport, then add the full list of received items (e.g. Bats, Balls, Wickets, Stumps, Pads).
+                <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  First select the game/sport, then add the full list of received items.
                 </p>
               </div>
               <button 
                 type="button"
                 onClick={() => setShowBatchAddModal(false)}
-                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-lg cursor-pointer px-2"
+                className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
               >
                 ✕
               </button>
             </div>
+
+            {/* Scrollable Body */}
+            <div className="overflow-y-auto flex-1 p-4 sm:p-6 flex flex-col gap-4">
 
             {/* STEP 1: SELECT SPORT / GAME & DEFAULT LOCATION */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-blue-50/60 dark:bg-blue-950/20 p-3.5 rounded-2xl border border-blue-100 dark:border-blue-900/40">
@@ -1741,9 +1751,10 @@ _MPGI Sports Desk_`;
                 ))}
               </div>
             </div>
+            </div>
 
-            {/* Modal Footer */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+            {/* Modal Sticky Footer */}
+            <div className="sticky bottom-0 z-10 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-4 sm:px-6 py-3.5 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
               <div className="text-xs text-slate-500 dark:text-slate-400">
                 Total Units to Receive: <strong className="text-blue-600 dark:text-cyan-400 text-sm">{batchItems.reduce((sum, it) => sum + (parseInt(it.quantity || 0, 10) || 0), 0)}</strong> units across <strong>{batchItems.length}</strong> items.
               </div>
@@ -1752,16 +1763,16 @@ _MPGI Sports Desk_`;
                 <button
                   type="button"
                   onClick={() => setShowBatchAddModal(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer"
+                  className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer min-h-[42px]"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={batchSaving}
-                  className="px-5 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 shadow-md shadow-blue-500/25 cursor-pointer disabled:opacity-50"
+                  className="flex-1 sm:flex-initial px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 shadow-md shadow-blue-500/25 cursor-pointer disabled:opacity-50 min-h-[42px]"
                 >
-                  {batchSaving ? 'Saving to Database...' : 'Save All Items into Stock (PostgreSQL)'}
+                  {batchSaving ? 'Saving to Database...' : 'Save All Items into Stock'}
                 </button>
               </div>
             </div>
@@ -1772,12 +1783,12 @@ _MPGI Sports Desk_`;
 
       {/* MODAL 4: EDIT EQUIPMENT ITEM (User Voice Note: "edit karne ka option ho") */}
       {editingItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/65 backdrop-blur-sm animate-fade-in">
+        <div className="fixed inset-0 z-[70] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/75 backdrop-blur-md animate-fade-in">
           <form 
             onSubmit={handleSaveEdit}
-            className="w-full max-w-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-2xl flex flex-col gap-4 max-h-[92vh] overflow-y-auto"
+            className="w-full max-w-lg bg-white dark:bg-slate-900 border-t sm:border border-slate-200 dark:border-slate-800 rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden"
           >
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+            <div className="sticky top-0 z-10 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
               <h3 className="font-bold text-base text-slate-900 dark:text-slate-100 flex items-center gap-2">
                 <Pencil className="w-4 h-4 text-blue-600" />
                 <span>Edit Equipment Item ({editingItem.id})</span>
@@ -1785,108 +1796,110 @@ _MPGI Sports Desk_`;
               <button 
                 type="button"
                 onClick={() => setEditingItem(null)}
-                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-lg cursor-pointer"
+                className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
               >
                 ✕
               </button>
             </div>
 
-            <div className="flex flex-col gap-1">
-              <label className="text-xs font-bold text-slate-600 dark:text-slate-300">Equipment Name *</label>
-              <input
-                type="text"
-                value={editName}
-                onChange={(e) => setEditName(e.target.value)}
-                required
-                className="px-3 py-2 rounded-xl text-xs sm:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 outline-none focus:border-blue-500"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
+            <div className="p-5 overflow-y-auto flex-1 flex flex-col gap-4">
               <div className="flex flex-col gap-1">
-                <label className="text-xs font-bold text-slate-600 dark:text-slate-300">Sport Discipline</label>
-                <select
-                  value={editSport}
-                  onChange={(e) => setEditSport(e.target.value)}
-                  className="px-3 py-2 rounded-xl text-xs sm:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 outline-none"
-                >
-                  {sportsList.map(s => <option key={s} value={s}>{s}</option>)}
-                </select>
-              </div>
-
-              <div className="flex flex-col gap-1">
-                <label className="text-xs font-bold text-slate-600 dark:text-slate-300">Category</label>
-                <select
-                  value={editCategory}
-                  onChange={(e) => setEditCategory(e.target.value)}
-                  className="px-3 py-2 rounded-xl text-xs sm:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 outline-none"
-                >
-                  <option value="Bats/Racquets">Bats / Racquets</option>
-                  <option value="Balls">Balls</option>
-                  <option value="Stumps/Posts">Stumps / Posts</option>
-                  <option value="Protective">Protective Gear</option>
-                  <option value="Nets">Nets / Court</option>
-                  <option value="Boards">Boards / Sets</option>
-                  <option value="Misc">Misc / Accessories</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div className="flex flex-col gap-1">
-                <label className="text-xs font-bold text-slate-600 dark:text-slate-300">Total Stock Quantity *</label>
+                <label className="text-xs font-bold text-slate-600 dark:text-slate-300">Equipment Name *</label>
                 <input
-                  type="number"
-                  min="1"
-                  max="1000"
-                  value={editQty}
-                  onChange={(e) => setEditQty(e.target.value)}
+                  type="text"
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
                   required
-                  className="px-3 py-2 rounded-xl text-xs sm:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 outline-none focus:border-blue-500 font-bold"
+                  className="px-3 py-2.5 rounded-xl text-xs sm:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 outline-none focus:border-blue-500 font-semibold"
                 />
-                <span className="text-[10px] text-slate-400">
-                  Currently issued: {editingItem.issuedQuantity || 0} units
-                </span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-bold text-slate-600 dark:text-slate-300">Sport Discipline</label>
+                  <select
+                    value={editSport}
+                    onChange={(e) => setEditSport(e.target.value)}
+                    className="px-3 py-2.5 rounded-xl text-xs sm:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 outline-none"
+                  >
+                    {sportsList.map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                </div>
+
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-bold text-slate-600 dark:text-slate-300">Category</label>
+                  <select
+                    value={editCategory}
+                    onChange={(e) => setEditCategory(e.target.value)}
+                    className="px-3 py-2.5 rounded-xl text-xs sm:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 outline-none"
+                  >
+                    <option value="Bats/Racquets">Bats / Racquets</option>
+                    <option value="Balls">Balls</option>
+                    <option value="Stumps/Posts">Stumps / Posts</option>
+                    <option value="Protective">Protective Gear</option>
+                    <option value="Nets">Nets / Court</option>
+                    <option value="Boards">Boards / Sets</option>
+                    <option value="Misc">Misc / Accessories</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-bold text-slate-600 dark:text-slate-300">Total Stock Quantity *</label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="1000"
+                    value={editQty}
+                    onChange={(e) => setEditQty(e.target.value)}
+                    required
+                    className="px-3 py-2.5 rounded-xl text-xs sm:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 outline-none focus:border-blue-500 font-bold"
+                  />
+                  <span className="text-[10px] text-slate-400">
+                    Currently issued: {editingItem.issuedQuantity || 0} units
+                  </span>
+                </div>
+
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-bold text-slate-600 dark:text-slate-300">Physical Condition</label>
+                  <select
+                    value={editCondition}
+                    onChange={(e) => setEditCondition(e.target.value)}
+                    className="px-3 py-2.5 rounded-xl text-xs sm:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 outline-none"
+                  >
+                    <option value="New">New / Brand New</option>
+                    <option value="Good">Good Condition</option>
+                    <option value="Fair">Fair / Usable</option>
+                    <option value="Needs Maintenance">Needs Maintenance</option>
+                  </select>
+                </div>
               </div>
 
               <div className="flex flex-col gap-1">
-                <label className="text-xs font-bold text-slate-600 dark:text-slate-300">Physical Condition</label>
-                <select
-                  value={editCondition}
-                  onChange={(e) => setEditCondition(e.target.value)}
-                  className="px-3 py-2 rounded-xl text-xs sm:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 outline-none"
-                >
-                  <option value="New">New / Brand New</option>
-                  <option value="Good">Good Condition</option>
-                  <option value="Fair">Fair / Usable</option>
-                  <option value="Needs Maintenance">Needs Maintenance</option>
-                </select>
+                <label className="text-xs font-bold text-slate-600 dark:text-slate-300">Storage Location / Locker</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Locker C-1, Sports Store Bay"
+                  value={editLocation}
+                  onChange={(e) => setEditLocation(e.target.value)}
+                  className="px-3 py-2.5 rounded-xl text-xs sm:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 outline-none focus:border-blue-500"
+                />
               </div>
             </div>
 
-            <div className="flex flex-col gap-1">
-              <label className="text-xs font-bold text-slate-600 dark:text-slate-300">Storage Location / Locker</label>
-              <input
-                type="text"
-                placeholder="e.g. Locker C-1, Sports Store Bay"
-                value={editLocation}
-                onChange={(e) => setEditLocation(e.target.value)}
-                className="px-3 py-2 rounded-xl text-xs sm:text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 outline-none focus:border-blue-500"
-              />
-            </div>
-
-            <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100 dark:border-slate-800">
+            <div className="sticky bottom-0 z-10 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-5 py-3.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-2.5">
               <button
                 type="button"
                 onClick={() => setEditingItem(null)}
-                className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer"
+                className="px-4 py-2.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer min-h-[42px]"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={editingSaving}
-                className="px-5 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-md shadow-blue-500/25 cursor-pointer disabled:opacity-50"
+                className="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-md shadow-blue-500/25 cursor-pointer disabled:opacity-50 min-h-[42px]"
               >
                 {editingSaving ? 'Updating...' : 'Update Equipment in DB'}
               </button>
@@ -1897,8 +1910,8 @@ _MPGI Sports Desk_`;
 
       {/* MODAL 5: CONFIRM DELETE EQUIPMENT (User Voice Note: "delete karne ka option ho") */}
       {deletingItem && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-150">
+        <div className="fixed inset-0 z-[70] bg-slate-950/80 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fade-in">
+          <div className="bg-white dark:bg-slate-900 border-t sm:border border-slate-200 dark:border-slate-800 rounded-t-3xl sm:rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-600 dark:text-rose-400 flex items-center justify-center flex-shrink-0">
                 <Trash2 className="w-5 h-5" />
@@ -1933,7 +1946,7 @@ _MPGI Sports Desk_`;
                 type="button"
                 onClick={() => setDeletingItem(null)}
                 disabled={isDeleting}
-                className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer"
+                className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer min-h-[42px]"
               >
                 Cancel
               </button>
@@ -1941,7 +1954,7 @@ _MPGI Sports Desk_`;
                 type="button"
                 onClick={handleConfirmDelete}
                 disabled={isDeleting}
-                className="px-5 py-2 rounded-xl text-xs font-bold text-white bg-rose-600 hover:bg-rose-500 shadow-md shadow-rose-600/25 cursor-pointer disabled:opacity-50"
+                className="flex-1 sm:flex-initial px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-rose-600 hover:bg-rose-500 shadow-md shadow-rose-600/25 cursor-pointer disabled:opacity-50 min-h-[42px]"
               >
                 {isDeleting ? 'Deleting...' : 'Yes, Delete from DB'}
               </button>
@@ -1952,8 +1965,8 @@ _MPGI Sports Desk_`;
 
       {/* MODAL 6: CLEAR ALL MOCK DATA (User Voice Note: "isme se saare jo mock data hain usko hata do") */}
       {showClearMockModal && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-150">
+        <div className="fixed inset-0 z-[70] bg-slate-950/80 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fade-in">
+          <div className="bg-white dark:bg-slate-900 border-t sm:border border-slate-200 dark:border-slate-800 rounded-t-3xl sm:rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-600 dark:text-amber-400 flex items-center justify-center flex-shrink-0">
                 <ShieldAlert className="w-5 h-5" />
@@ -1977,7 +1990,7 @@ _MPGI Sports Desk_`;
                 type="button"
                 onClick={() => setShowClearMockModal(false)}
                 disabled={isClearingMock}
-                className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer"
+                className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer min-h-[42px]"
               >
                 Cancel
               </button>
@@ -1985,7 +1998,7 @@ _MPGI Sports Desk_`;
                 type="button"
                 onClick={handleConfirmClearMock}
                 disabled={isClearingMock}
-                className="px-5 py-2 rounded-xl text-xs font-bold text-white bg-rose-600 hover:bg-rose-500 shadow-md shadow-rose-600/25 cursor-pointer disabled:opacity-50"
+                className="flex-1 sm:flex-initial px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-rose-600 hover:bg-rose-500 shadow-md shadow-rose-600/25 cursor-pointer disabled:opacity-50 min-h-[42px]"
               >
                 {isClearingMock ? 'Clearing Database...' : 'Yes, Wipe All Mock Stock'}
               </button>
@@ -1996,8 +2009,8 @@ _MPGI Sports Desk_`;
 
       {/* MODAL 7: DELETE LOAN RECORD (User: "yaha bhi delete ka option do") */}
       {deletingLoan && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-150">
+        <div className="fixed inset-0 z-[70] bg-slate-950/80 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fade-in">
+          <div className="bg-white dark:bg-slate-900 border-t sm:border border-slate-200 dark:border-slate-800 rounded-t-3xl sm:rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-600 dark:text-rose-400 flex items-center justify-center flex-shrink-0">
                 <Trash2 className="w-5 h-5" />
@@ -2044,7 +2057,7 @@ _MPGI Sports Desk_`;
                 type="button"
                 onClick={() => setDeletingLoan(null)}
                 disabled={isDeletingLoan}
-                className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer"
+                className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer min-h-[42px]"
               >
                 Cancel
               </button>
@@ -2052,7 +2065,7 @@ _MPGI Sports Desk_`;
                 type="button"
                 onClick={handleConfirmDeleteLoan}
                 disabled={isDeletingLoan}
-                className="px-5 py-2 rounded-xl text-xs font-bold text-white bg-rose-600 hover:bg-rose-500 shadow-md shadow-rose-600/25 cursor-pointer disabled:opacity-50"
+                className="flex-1 sm:flex-initial px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-rose-600 hover:bg-rose-500 shadow-md shadow-rose-600/25 cursor-pointer disabled:opacity-50 min-h-[42px]"
               >
                 {isDeletingLoan ? 'Deleting...' : 'Yes, Delete Record'}
               </button>

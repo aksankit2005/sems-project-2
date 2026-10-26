@@ -285,13 +285,13 @@ _APEX Sports Council / Hostel Sports Desk_`;
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/70 backdrop-blur-md animate-fade-in">
-      <div className="w-full max-w-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 sm:p-7 shadow-2xl flex flex-col gap-4 max-h-[94vh] overflow-y-auto">
+    <div className="fixed inset-0 z-[70] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/75 backdrop-blur-md animate-fade-in">
+      <div className="w-full max-w-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col max-h-[92vh] sm:max-h-[88vh] overflow-hidden">
         
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+        {/* Sticky Header */}
+        <div className="sticky top-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-5 py-3.5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between z-10 flex-shrink-0">
           <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 to-cyan-500 text-white flex items-center justify-center font-bold shadow-md shadow-blue-500/20">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-500 text-white flex items-center justify-center font-bold shadow-md shadow-blue-500/20">
               <Package className="w-5 h-5 text-white" />
             </div>
             <div>
@@ -307,8 +307,9 @@ _APEX Sports Council / Hostel Sports Desk_`;
             </div>
           </div>
           <button 
+            type="button"
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xl cursor-pointer p-1 rounded-xl"
+            className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 text-lg cursor-pointer transition-colors"
           >
             ✕
           </button>
@@ -316,7 +317,7 @@ _APEX Sports Council / Hostel Sports Desk_`;
 
         {/* Success Banner if Issued */}
         {issuedSuccessLoan ? (
-          <div className="bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-500/30 rounded-2xl p-5 flex flex-col gap-3.5 text-center items-center">
+          <div className="overflow-y-auto p-5 flex flex-col gap-3.5 text-center items-center">
             <div className="w-12 h-12 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/30">
               <Check className="w-6 h-6 stroke-[3]" />
             </div>
@@ -364,7 +365,8 @@ _APEX Sports Council / Hostel Sports Desk_`;
             </div>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
+            <div className="overflow-y-auto p-4 sm:p-6 space-y-4 flex-1 overscroll-contain">
             
             {errorMsg && (
               <div className="p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-600 dark:text-rose-400 text-xs font-semibold flex items-center gap-2">
@@ -854,12 +856,14 @@ _APEX Sports Council / Hostel Sports Desk_`;
               </label>
             </div>
 
-            {/* Footer Buttons */}
-            <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2 sm:gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+            </div>
+
+            {/* Sticky Action Footer (ALWAYS VISIBLE ON PHONE SCREENS) */}
+            <div className="sticky bottom-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-5 py-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-3 z-10 shadow-lg flex-shrink-0">
               <button
                 type="button"
                 onClick={onClose}
-                className="w-full sm:w-auto px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 cursor-pointer text-center"
+                className="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 cursor-pointer text-center"
               >
                 Cancel
               </button>
@@ -867,7 +871,7 @@ _APEX Sports Council / Hostel Sports Desk_`;
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full sm:w-auto px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 shadow-md shadow-blue-500/25 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 active:scale-98"
+                className="flex-1 sm:flex-initial px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 shadow-md shadow-blue-500/25 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 active:scale-98 text-center"
               >
                 <Send className="w-4 h-4" />
                 <span>{submitting ? 'Issuing...' : 'Confirm & Issue Gear'}</span>

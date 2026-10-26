@@ -25,6 +25,258 @@ import {
 import { api } from '../utils/api';
 import { exportAttendanceCSV } from '../utils/exportUtils';
 
+// Touch & Mobile-Optimized Swipeable Card Component
+function SwipeableAttendanceCard({
+  student,
+  currentRec,
+  status,
+  stats,
+  onSetStatus,
+  onSetNotes,
+  onSetExtra,
+  onSelectStudentHistory
+}) {
+  const [touchStartX, setTouchStartX] = useState(null);
+  const [swipeDiff, setSwipeDiff] = useState(0);
+
+  const handleTouchStart = (e) => {
+    setTouchStartX(e.touches[0].clientX);
+  };
+
+  const handleTouchMove = (e) => {
+    if (touchStartX === null) return;
+    const currentX = e.touches[0].clientX;
+    const diff = currentX - touchStartX;
+    if (Math.abs(diff) < 140) {
+      setSwipeDiff(diff);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (swipeDiff > 65) {
+      onSetStatus(student.id, 'Present');
+    } else if (swipeDiff < -65) {
+      onSetStatus(student.id, 'Absent');
+    }
+    setSwipeDiff(0);
+    setTouchStartX(null);
+  };
+
+  const cardBorder = 
+    status === 'Present' ? 'border-emerald-500/70 bg-emerald-50/25 dark:bg-emerald-950/25 shadow-emerald-500/10' :
+    status === 'Absent' ? 'border-rose-500/70 bg-rose-50/25 dark:bg-rose-950/25 shadow-rose-500/10' :
+    status === 'Late' ? 'border-amber-500/70 bg-amber-50/25 dark:bg-amber-950/25 shadow-amber-500/10' :
+    status === 'Excused' ? 'border-blue-500/70 bg-blue-50/25 dark:bg-blue-950/25 shadow-blue-500/10' :
+    'border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900';
+
+  return (
+    <div 
+      className={`border rounded-2xl p-4 flex flex-col justify-between gap-3.5 shadow-sm transition-all duration-200 relative overflow-hidden select-none ${cardBorder}`}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      style={{
+        transform: swipeDiff !== 0 ? `translateX(${swipeDiff * 0.45}px)` : 'none',
+        transition: swipeDiff === 0 ? 'transform 0.2s ease-out' : 'none'
+      }}
+    >
+      {/* Swipe Feedback Visual Cue */}
+      {swipeDiff > 40 && (
+        <div className="absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-emerald-500/40 to-transparent flex items-center justify-start pl-3 pointer-events-none z-10">
+          <CheckCircle className="w-6 h-6 text-emerald-500 animate-pulse" />
+        </div>
+      )}
+      {swipeDiff < -40 && (
+        <div className="absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-rose-500/40 to-transparent flex items-center justify-end pr-3 pointer-events-none z-10">
+          <XCircle className="w-6 h-6 text-rose-500 animate-pulse" />
+        </div>
+      )}
+
+      {/* Header: Avatar, Name, Residency & Status Badge */}
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-500 text-white flex items-center justify-center font-bold text-sm shadow-sm flex-shrink-0 border border-white/20">
+            {student.name.split(' ').map(n => n[0]).join('')}
+          </div>
+          <div className="flex flex-col min-w-0">
+            <span className="font-bold text-sm text-slate-900 dark:text-slate-100 leading-tight truncate">
+              {student.name}
+            </span>
+            <span className="font-mono text-[11px] text-slate-500 dark:text-slate-400">
+              {student.rollNumber} • {student.gender === 'Female' ? '♀ Female' : '♂ Male'}
+            </span>
+          </div>
+        </div>
+
+        {/* Current status pill */}
+        <div className="flex flex-col items-end flex-shrink-0">
+          <span className={`text-[11px] font-black px-2.5 py-0.5 rounded-full border ${
+            status === 'Present' ? 'bg-emerald-500 text-white border-emerald-500' :
+            status === 'Absent' ? 'bg-rose-500 text-white border-rose-500' :
+            status === 'Late' ? 'bg-amber-500 text-white border-amber-500' :
+            status === 'Excused' ? 'bg-blue-600 text-white border-blue-600' :
+            'bg-slate-100 dark:bg-slate-800 text-slate-500 border-slate-300 dark:border-slate-700'
+          }`}>
+            {status}
+          </span>
+          <span className="text-[10px] text-slate-400 mt-0.5 font-medium">
+            {stats.total > 0 && stats.attendancePct !== null ? `${stats.attendancePct}% avg` : 'New'}
+          </span>
+        </div>
+      </div>
+
+      {/* Residency & Hostel Room Details */}
+      <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
+        {student.residency === 'Hosteller' ? (
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-purple-500/10 text-purple-700 dark:text-purple-300 border border-purple-500/25 font-semibold">
+            <Building className="w-3 h-3 text-purple-500" />
+            Hosteller • {student.hostelName} (Room {student.roomNumber})
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-700 dark:text-cyan-300 border border-cyan-500/25 font-semibold">
+            <Home className="w-3 h-3 text-cyan-500" />
+            Day Scholar
+          </span>
+        )}
+      </div>
+
+      {/* INTERACTIVE 4-PILL SLIDER TRACK (Large touch targets for thumb) */}
+      <div className="flex flex-col gap-1 pt-1">
+        <div className="grid grid-cols-4 gap-1 p-1 bg-slate-100/90 dark:bg-slate-800/80 rounded-2xl border border-slate-200/80 dark:border-slate-700/80">
+          {/* Present */}
+          <button
+            type="button"
+            onClick={() => onSetStatus(student.id, 'Present')}
+            className={`py-2 px-1 rounded-xl text-xs font-bold transition-all flex flex-col items-center justify-center gap-0.5 cursor-pointer active:scale-95 min-h-[42px] ${
+              status === 'Present'
+                ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/30 font-black ring-2 ring-emerald-500/30'
+                : 'text-slate-600 dark:text-slate-300 hover:text-emerald-600 hover:bg-emerald-500/10'
+            }`}
+          >
+            <CheckCircle className="w-3.5 h-3.5" />
+            <span>Present</span>
+          </button>
+
+          {/* Absent */}
+          <button
+            type="button"
+            onClick={() => onSetStatus(student.id, 'Absent')}
+            className={`py-2 px-1 rounded-xl text-xs font-bold transition-all flex flex-col items-center justify-center gap-0.5 cursor-pointer active:scale-95 min-h-[42px] ${
+              status === 'Absent'
+                ? 'bg-rose-500 text-white shadow-md shadow-rose-500/30 font-black ring-2 ring-rose-500/30'
+                : 'text-slate-600 dark:text-slate-300 hover:text-rose-600 hover:bg-rose-500/10'
+            }`}
+          >
+            <XCircle className="w-3.5 h-3.5" />
+            <span>Absent</span>
+          </button>
+
+          {/* Late */}
+          <button
+            type="button"
+            onClick={() => onSetStatus(student.id, 'Late')}
+            className={`py-2 px-1 rounded-xl text-xs font-bold transition-all flex flex-col items-center justify-center gap-0.5 cursor-pointer active:scale-95 min-h-[42px] ${
+              status === 'Late'
+                ? 'bg-amber-500 text-white shadow-md shadow-amber-500/30 font-black ring-2 ring-amber-500/30'
+                : 'text-slate-600 dark:text-slate-300 hover:text-amber-600 hover:bg-amber-500/10'
+            }`}
+          >
+            <Clock className="w-3.5 h-3.5" />
+            <span>Late</span>
+          </button>
+
+          {/* Excused */}
+          <button
+            type="button"
+            onClick={() => onSetStatus(student.id, 'Excused')}
+            className={`py-2 px-1 rounded-xl text-xs font-bold transition-all flex flex-col items-center justify-center gap-0.5 cursor-pointer active:scale-95 min-h-[42px] ${
+              status === 'Excused'
+                ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30 font-black ring-2 ring-blue-600/30'
+                : 'text-slate-600 dark:text-slate-300 hover:text-blue-600 hover:bg-blue-500/10'
+            }`}
+          >
+            <HelpCircle className="w-3.5 h-3.5" />
+            <span>Excuse</span>
+          </button>
+        </div>
+
+        {/* Gesture Hint for mobile */}
+        <span className="text-[10px] text-center text-slate-400 font-medium">
+          👉 Swipe right for Present • 👈 Swipe left for Absent
+        </span>
+      </div>
+
+      {/* Sub-inputs if Late or Excused */}
+      {status === 'Late' && (
+        <div className="bg-amber-500/10 border border-amber-500/25 p-2 rounded-xl flex items-center justify-between text-xs">
+          <span className="text-amber-800 dark:text-amber-300 font-semibold">Arrival Time:</span>
+          <input
+            type="text"
+            value={currentRec.arrivalTime || '05:30 PM'}
+            onChange={(e) => onSetExtra(student.id, 'arrivalTime', e.target.value)}
+            className="w-24 px-2 py-0.5 rounded-lg bg-white dark:bg-slate-800 border border-amber-400 text-xs text-right text-slate-900 dark:text-slate-100 outline-none"
+          />
+        </div>
+      )}
+
+      {status === 'Excused' && (
+        <div className="bg-blue-500/10 border border-blue-500/25 p-2 rounded-xl flex flex-col gap-1 text-xs">
+          <span className="text-blue-800 dark:text-blue-300 font-semibold">Excuse Reason:</span>
+          <select
+            value={currentRec.excuseReason || 'Medical / Sick Leave'}
+            onChange={(e) => onSetExtra(student.id, 'excuseReason', e.target.value)}
+            className="w-full px-2 py-1 rounded-lg bg-white dark:bg-slate-800 border border-blue-400 text-xs text-slate-900 dark:text-slate-100 outline-none cursor-pointer"
+          >
+            <option value="Medical / Sick Leave">Medical / Health Clinic / Fever</option>
+            <option value="College Semester Exam">College Examination / Viva</option>
+            <option value="Lab Practical Overtime">Lab Practical Classes</option>
+            <option value="Hostel Maintenance Duty">Hostel Committee Duty</option>
+            <option value="Family / Out of Campus">Permitted Leave / Out of Campus</option>
+          </select>
+        </div>
+      )}
+
+      {/* Sub-input: Per-Student Remark / Note */}
+      <div className="pt-0.5">
+        <input
+          type="text"
+          placeholder="Remark / note (e.g. knee injury, late entry)..."
+          value={currentRec.notes || ''}
+          onChange={(e) => onSetNotes(student.id, e.target.value)}
+          className="w-full px-2.5 py-1 rounded-lg text-xs bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 outline-none focus:border-blue-400 placeholder:text-slate-400"
+        />
+      </div>
+
+      {/* Footer: View Complete History Link & Reset */}
+      <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800 text-xs">
+        <span className="text-slate-400 text-[11px]">
+          {stats.total > 0 ? `${stats.attended}/${stats.total} days attended` : 'No past logs'}
+        </span>
+        <div className="flex items-center gap-2">
+          {status !== 'Unmarked' && (
+            <button
+              type="button"
+              onClick={() => onSetStatus(student.id, 'Unmarked')}
+              className="text-[11px] text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
+            >
+              Reset
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={() => onSelectStudentHistory(student)}
+            className="flex items-center gap-1 font-semibold text-blue-600 dark:text-cyan-400 hover:underline cursor-pointer"
+          >
+            <History className="w-3.5 h-3.5" />
+            <span>View Log</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  );
+}
+
 export default function AttendanceView({ onSelectStudentHistory }) {
   const [sports, setSports] = useState([]);
   const [selectedSport, setSelectedSport] = useState('Cricket');
@@ -42,8 +294,23 @@ export default function AttendanceView({ onSelectStudentHistory }) {
   const [allSessionsList, setAllSessionsList] = useState([]);
   const [loadingSessions, setLoadingSessions] = useState(false);
 
-  // View Mode & Sport Strict Filtering (User Voice Request)
-  const [viewMode, setViewMode] = useState('table'); // 'table' (default - as requested) or 'cards'
+  // View Mode & Sport Strict Filtering (Smart auto-selection: cards on mobile, table on desktop)
+  const [viewMode, setViewMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('apex_attendance_view_mode');
+      if (saved) return saved;
+      return window.innerWidth < 640 ? 'cards' : 'table';
+    }
+    return 'table';
+  });
+
+  const handleSetViewMode = (mode) => {
+    setViewMode(mode);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('apex_attendance_view_mode', mode);
+    }
+  };
+
   const [filterStrictBySport, setFilterStrictBySport] = useState(true); // User: "jis game ka select kiye hoon, bas usi game ke player wahan dikhein"
   const [isMarkingActive, setIsMarkingActive] = useState(false); // User: "pehle mark attendance par click karoon then sabka khul jaye"
 
@@ -151,6 +418,17 @@ export default function AttendanceView({ onSelectStudentHistory }) {
       return {
         ...prev,
         [studentId]: { ...current, notes }
+      };
+    });
+  };
+
+  // Set extra field (e.g. arrivalTime, excuseReason)
+  const handleSetExtra = (studentId, key, val) => {
+    setAttendanceRecords(prev => {
+      const current = prev[studentId] || {};
+      return {
+        ...prev,
+        [studentId]: { ...current, [key]: val }
       };
     });
   };
@@ -516,31 +794,31 @@ export default function AttendanceView({ onSelectStudentHistory }) {
             />
           </div>
 
-          {/* View Mode Toggle: Table View (Requested by User) vs Cards */}
-          <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl border border-slate-200 dark:border-slate-700 self-end sm:self-auto">
+          {/* View Mode Toggle: Table View (Sticky Name) vs Cards (Touch / Slide) */}
+          <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl border border-slate-200 dark:border-slate-700 self-stretch sm:self-auto justify-center">
             <button
               type="button"
-              onClick={() => setViewMode('table')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              onClick={() => handleSetViewMode('table')}
+              className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                 viewMode === 'table'
                   ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-cyan-400 shadow-xs'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
               }`}
             >
               <Table className="w-3.5 h-3.5" />
-              <span>Table View</span>
+              <span>Table (Sticky Name)</span>
             </button>
             <button
               type="button"
-              onClick={() => setViewMode('cards')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              onClick={() => handleSetViewMode('cards')}
+              className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                 viewMode === 'cards'
                   ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-cyan-400 shadow-xs'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
               }`}
             >
               <LayoutGrid className="w-3.5 h-3.5" />
-              <span>Cards</span>
+              <span>Slide Cards (Touch/Swipe)</span>
             </button>
           </div>
         </div>
@@ -655,8 +933,10 @@ export default function AttendanceView({ onSelectStudentHistory }) {
             <table className="w-full text-left text-xs sm:text-sm border-collapse">
               <thead>
                 <tr className="bg-slate-50/90 dark:bg-slate-800/80 border-b border-slate-200/80 dark:border-slate-800 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                  <th className="py-3 px-3.5 w-10 text-center">#</th>
-                  <th className="py-3 px-3.5 min-w-[200px]">Player & Roll No</th>
+                  <th className="py-3 px-2 sm:px-3.5 w-8 sm:w-10 text-center sticky left-0 z-20 bg-slate-50 dark:bg-slate-800">#</th>
+                  <th className="py-3 px-3.5 min-w-[180px] sm:min-w-[220px] sticky left-8 sm:left-10 z-20 bg-slate-50 dark:bg-slate-800 border-r border-slate-200/80 dark:border-slate-700/80 shadow-[3px_0_8px_-2px_rgba(0,0,0,0.06)]">
+                    Player & Roll No
+                  </th>
                   <th className="py-3 px-3.5 min-w-[150px]">Residency / Hostel</th>
                   <th className="py-3 px-3.5 min-w-[140px]">Registered Sports</th>
                   <th className="py-3 px-3.5 text-center min-w-[90px]">Avg Record</th>
@@ -687,22 +967,22 @@ export default function AttendanceView({ onSelectStudentHistory }) {
                     <tr key={student.id} className={`transition-colors duration-150 ${rowAccent}`}>
                       
                       {/* Index */}
-                      <td className="py-3 px-3.5 text-center font-mono text-[11px] text-slate-400">
+                      <td className="py-3 px-2 sm:px-3.5 text-center font-mono text-[11px] text-slate-400 sticky left-0 z-10 bg-white dark:bg-slate-900">
                         {idx + 1}
                       </td>
 
-                      {/* Player & Roll */}
-                      <td className="py-3 px-3.5">
-                        <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-500 text-white flex items-center justify-center font-bold text-xs shadow-sm flex-shrink-0">
+                      {/* Player & Roll (Sticky on mobile so name stays visible when scrolling) */}
+                      <td className="py-3 px-3.5 sticky left-8 sm:left-10 z-10 bg-white dark:bg-slate-900 border-r border-slate-200/80 dark:border-slate-800 shadow-[3px_0_8px_-2px_rgba(0,0,0,0.06)]">
+                        <div className="flex items-center gap-2.5 sm:gap-3">
+                          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-500 text-white flex items-center justify-center font-bold text-xs shadow-sm flex-shrink-0">
                             {student.name.split(' ').map(n => n[0]).join('')}
                           </div>
                           <div className="flex flex-col min-w-0">
                             <span className="font-bold text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm">
                               {student.name}
                             </span>
-                            <span className="font-mono text-[11px] text-slate-500 dark:text-slate-400">
-                              {student.rollNumber} • {student.gender === 'Female' ? '♀ Female' : '♂ Male'}
+                            <span className="font-mono text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                              {student.rollNumber} • {student.gender === 'Female' ? '♀' : '♂'}
                             </span>
                           </div>
                         </div>
@@ -920,212 +1200,64 @@ export default function AttendanceView({ onSelectStudentHistory }) {
           </div>
         </div>
       ) : (
-        /* ======================== CARDS GRID VIEW ======================== */
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-20 sm:pb-0">
           {filteredStudents.map(student => {
             const currentRec = attendanceRecords[student.id] || { status: 'Unmarked' };
             const status = currentRec.status || 'Unmarked';
             const stats = student.attendanceStats || { attendancePct: null, attended: 0, total: 0 };
 
             return (
-              <div 
+              <SwipeableAttendanceCard
                 key={student.id}
-                className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 flex flex-col justify-between gap-3.5 shadow-sm hover:shadow-md hover:border-blue-500/40 transition-all duration-200"
-              >
-                
-                {/* Header: Avatar, Name, Residency & Room */}
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-center gap-3">
-                    <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-500 text-white flex items-center justify-center font-bold text-sm shadow-sm flex-shrink-0 border border-white/20">
-                      {student.name.split(' ').map(n => n[0]).join('')}
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="font-bold text-sm text-slate-900 dark:text-slate-100 leading-tight">
-                        {student.name}
-                      </span>
-                      <span className="font-mono text-[11px] text-slate-500 dark:text-slate-400">
-                        {student.rollNumber} • {student.gender === 'Female' ? '♀ Female' : '♂ Male'}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Attendance % Gauge */}
-                  <div className="flex flex-col items-end">
-                    <span className="text-xs font-black text-emerald-600 dark:text-emerald-400">
-                      {stats.total > 0 && stats.attendancePct !== null ? `${stats.attendancePct}%` : '—'}
-                    </span>
-                    <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">
-                      {stats.total > 0 ? 'Avg. Record' : 'New Player'}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Residency & Hostel Room Details */}
-                <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
-                  {student.residency === 'Hosteller' ? (
-                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-purple-500/10 text-purple-700 dark:text-purple-300 border border-purple-500/25 font-semibold">
-                      <Building className="w-3 h-3 text-purple-500" />
-                      Hosteller • {student.hostelName} (Room {student.roomNumber})
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-700 dark:text-cyan-300 border border-cyan-500/25 font-semibold">
-                      <Home className="w-3 h-3 text-cyan-500" />
-                      Day Scholar
-                    </span>
-                  )}
-
-                  {/* Unmarked status indicator pill if not yet marked */}
-                  {status === 'Unmarked' && (
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 text-[10px] font-semibold">
-                      Unmarked
-                    </span>
-                  )}
-                </div>
-
-                {/* Attendance Action Matrix (P / A / L / E) */}
-                <div className="grid grid-cols-4 gap-1.5 pt-1">
-                  
-                  {/* Present */}
-                  <button
-                    onClick={() => handleSetStatus(student.id, 'Present')}
-                    className={`py-2 px-1 rounded-xl text-[11px] sm:text-xs font-bold transition-all flex flex-col items-center justify-center gap-0.5 cursor-pointer active:scale-95 ${
-                      status === 'Present'
-                        ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/30 scale-102 font-extrabold'
-                        : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 dark:hover:bg-slate-700'
-                    }`}
-                  >
-                    <CheckCircle className="w-3.5 h-3.5" />
-                    <span>Present</span>
-                  </button>
-
-                  {/* Absent */}
-                  <button
-                    onClick={() => handleSetStatus(student.id, 'Absent')}
-                    className={`py-2 px-1 rounded-xl text-[11px] sm:text-xs font-bold transition-all flex flex-col items-center justify-center gap-0.5 cursor-pointer active:scale-95 ${
-                      status === 'Absent'
-                        ? 'bg-rose-500 text-white shadow-md shadow-rose-500/30 scale-102 font-extrabold'
-                        : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 dark:hover:bg-slate-700'
-                    }`}
-                  >
-                    <XCircle className="w-3.5 h-3.5" />
-                    <span>Absent</span>
-                  </button>
-
-                  {/* Late */}
-                  <button
-                    onClick={() => handleSetStatus(student.id, 'Late')}
-                    className={`py-2 px-1 rounded-xl text-[11px] sm:text-xs font-bold transition-all flex flex-col items-center justify-center gap-0.5 cursor-pointer active:scale-95 ${
-                      status === 'Late'
-                        ? 'bg-amber-500 text-white shadow-md shadow-amber-500/30 scale-102 font-extrabold'
-                        : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 dark:hover:bg-slate-700'
-                    }`}
-                  >
-                    <Clock className="w-3.5 h-3.5" />
-                    <span>Late</span>
-                  </button>
-
-                  {/* Excused */}
-                  <button
-                    onClick={() => handleSetStatus(student.id, 'Excused')}
-                    className={`py-2 px-1 rounded-xl text-[11px] sm:text-xs font-bold transition-all flex flex-col items-center justify-center gap-0.5 cursor-pointer active:scale-95 ${
-                      status === 'Excused'
-                        ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30 scale-102 font-extrabold'
-                        : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 dark:hover:bg-slate-700'
-                    }`}
-                  >
-                    <HelpCircle className="w-3.5 h-3.5" />
-                    <span>Excuse</span>
-                  </button>
-
-                </div>
-
-                {/* Sub-inputs if Late or Excused */}
-                {status === 'Late' && (
-                  <div className="bg-amber-500/10 border border-amber-500/25 p-2 rounded-xl flex items-center justify-between text-xs">
-                    <span className="text-amber-800 dark:text-amber-300 font-semibold">Arrival Time:</span>
-                    <input
-                      type="text"
-                      value={currentRec.arrivalTime || '05:30 PM'}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        setAttendanceRecords(p => ({
-                          ...p,
-                          [student.id]: { ...p[student.id], arrivalTime: val }
-                        }));
-                      }}
-                      className="w-24 px-2 py-0.5 rounded-lg bg-white dark:bg-slate-800 border border-amber-400 text-xs text-right text-slate-900 dark:text-slate-100 outline-none"
-                    />
-                  </div>
-                )}
-
-                {status === 'Excused' && (
-                  <div className="bg-blue-500/10 border border-blue-500/25 p-2 rounded-xl flex flex-col gap-1 text-xs">
-                    <span className="text-blue-800 dark:text-blue-300 font-semibold">Excuse Reason:</span>
-                    <select
-                      value={currentRec.excuseReason || 'Medical / Sick Leave'}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        setAttendanceRecords(p => ({
-                          ...p,
-                          [student.id]: { ...p[student.id], excuseReason: val }
-                        }));
-                      }}
-                      className="w-full px-2 py-1 rounded-lg bg-white dark:bg-slate-800 border border-blue-400 text-xs text-slate-900 dark:text-slate-100 outline-none cursor-pointer"
-                    >
-                      <option value="Medical / Sick Leave">Medical / Health Clinic / Fever</option>
-                      <option value="College Semester Exam">College Examination / Viva</option>
-                      <option value="Lab Practical Overtime">Lab Practical Classes</option>
-                      <option value="Hostel Maintenance Duty">Hostel Committee Duty</option>
-                      <option value="Family / Out of Campus">Permitted Leave / Out of Campus</option>
-                    </select>
-                  </div>
-                )}
-
-                {/* Sub-input: Per-Student Remark / Note */}
-                <div className="pt-0.5">
-                  <input
-                    type="text"
-                    placeholder="Remark / note (e.g. knee injury, late entry)..."
-                    value={currentRec.notes || ''}
-                    onChange={(e) => handleSetNotes(student.id, e.target.value)}
-                    className="w-full px-2.5 py-1 rounded-lg text-xs bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 outline-none focus:border-blue-400 placeholder:text-slate-400"
-                  />
-                </div>
-
-                {/* Footer: View Complete History Link & Reset */}
-                <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800 text-xs">
-                  <span className="text-slate-400 text-[11px]">
-                    {stats.total > 0 ? `${stats.attended}/${stats.total} days attended` : 'No past logs'}
-                  </span>
-                  <div className="flex items-center gap-2">
-                    {status !== 'Unmarked' && (
-                      <button
-                        onClick={() => handleSetStatus(student.id, 'Unmarked')}
-                        className="text-[11px] text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
-                      >
-                        Reset
-                      </button>
-                    )}
-                    <button
-                      onClick={() => onSelectStudentHistory(student)}
-                      className="flex items-center gap-1 font-semibold text-blue-600 dark:text-cyan-400 hover:underline cursor-pointer"
-                    >
-                      <History className="w-3.5 h-3.5" />
-                      <span>View Log</span>
-                    </button>
-                  </div>
-                </div>
-
-              </div>
+                student={student}
+                currentRec={currentRec}
+                status={status}
+                stats={stats}
+                onSetStatus={handleSetStatus}
+                onSetNotes={handleSetNotes}
+                onSetExtra={handleSetExtra}
+                onSelectStudentHistory={onSelectStudentHistory}
+              />
             );
           })}
         </div>
       )}
 
-      {/* Modal: Past Recorded Sessions Log */}
+      {/* Mobile Floating Action & Quick-Save Dock (Always Accessible on Phone Screens) */}
+      {filteredStudents.length > 0 && (
+        <div className="fixed bottom-16 left-3 right-3 z-30 sm:hidden flex items-center justify-between gap-2 p-2.5 rounded-2xl bg-slate-900/95 dark:bg-slate-950/95 backdrop-blur-xl border border-slate-800 shadow-2xl text-white animate-slide-up">
+          <div className="flex items-center gap-2 pl-1.5 text-xs font-bold">
+            <span className="flex items-center gap-1 text-emerald-400">
+              <CheckCircle className="w-3.5 h-3.5" />
+              {sessionStats.present}
+            </span>
+            <span className="text-slate-500">•</span>
+            <span className="flex items-center gap-1 text-rose-400">
+              <XCircle className="w-3.5 h-3.5" />
+              {sessionStats.absent}
+            </span>
+            <span className="text-slate-500">•</span>
+            <span className="text-[11px] text-slate-400 font-normal">
+              {sessionStats.unmarked} left
+            </span>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleSaveAttendance}
+            disabled={saving}
+            className="px-4 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white shadow-md shadow-blue-500/25 flex items-center gap-1.5 cursor-pointer disabled:opacity-50 active:scale-95"
+          >
+            <Save className="w-3.5 h-3.5" />
+            <span>{saving ? 'Saving...' : 'Save Sheet'}</span>
+          </button>
+        </div>
+      )}
+
+      {/* Modal: Past Recorded Sessions Log - Mobile Bottom Sheet at z-[70] */}
       {showSessionsDrawer && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-2xl w-full max-h-[85vh] overflow-hidden shadow-2xl flex flex-col animate-in fade-in zoom-in-95 duration-150">
+        <div className="fixed inset-0 z-[70] bg-slate-950/80 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fade-in">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-t-3xl sm:rounded-3xl max-w-2xl w-full max-h-[90vh] sm:max-h-[85vh] overflow-hidden shadow-2xl flex flex-col animate-in fade-in zoom-in-95 duration-150">
             <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <div className="w-9 h-9 rounded-xl bg-blue-500/10 text-blue-600 dark:text-cyan-400 flex items-center justify-center font-bold">
