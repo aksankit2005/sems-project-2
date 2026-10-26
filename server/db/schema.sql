@@ -64,6 +64,7 @@ CREATE TABLE IF NOT EXISTS loans (
   return_condition VARCHAR(32),
   notes TEXT,
   handover_photo_url TEXT,
+  items JSONB DEFAULT '[]'::jsonb,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
@@ -104,12 +105,18 @@ CREATE INDEX IF NOT EXISTS idx_records_student_id ON attendance_records(student_
 -- 6. DAY SCHOLAR GATE PASSES TABLE
 CREATE TABLE IF NOT EXISTS day_scholar_passes (
   id VARCHAR(64) PRIMARY KEY,
-  pass_code VARCHAR(64) NOT NULL,
-  gate_number VARCHAR(64) NOT NULL,
-  guard_phone VARCHAR(32) NOT NULL,
-  status VARCHAR(32) DEFAULT 'Active',
+  pass_code VARCHAR(64),
+  gate_number VARCHAR(128),
+  gate_location VARCHAR(128),
+  guard_name VARCHAR(128),
+  guard_phone VARCHAR(32),
+  status VARCHAR(32) DEFAULT 'Authorized',
   issued_by VARCHAR(128) DEFAULT 'Sports Admin',
-  authorized_students JSONB NOT NULL DEFAULT '[]'::jsonb,
+  authorized_by VARCHAR(128) DEFAULT 'Sports Admin',
+  authorized_students JSONB DEFAULT '[]'::jsonb,
+  students JSONB DEFAULT '[]'::jsonb,
+  notes TEXT,
+  date VARCHAR(64),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
