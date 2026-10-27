@@ -1,7 +1,13 @@
 import React from 'react';
-import { Trophy, ShieldCheck, Flame, ArrowRight, PlusCircle, Users, Package, CalendarCheck } from 'lucide-react';
+import { Trophy, ShieldCheck, Flame, ArrowRight, PlusCircle, Users, Package, CalendarCheck, FileText } from 'lucide-react';
 
-export default function HeroBanner({ stats, setActiveTab, onOpenIssueModal, onOpenGatePassModal }) {
+export default function HeroBanner({ 
+  stats, 
+  setActiveTab, 
+  onOpenIssueModal, 
+  onOpenGatePassModal,
+  onOpenHostelPermissionModal 
+}) {
   return (
     <div className="flex flex-col gap-6 py-2">
       
@@ -36,6 +42,14 @@ export default function HeroBanner({ stats, setActiveTab, onOpenIssueModal, onOp
           >
             <PlusCircle className="w-4 h-4 text-[#7156a5] dark:text-[#b8a5e5]" />
             <span>Issue Sports Gear</span>
+          </button>
+
+          <button
+            onClick={onOpenHostelPermissionModal}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/40 shadow-2xs transition-all cursor-pointer active:scale-95"
+          >
+            <FileText className="w-4 h-4 text-amber-500 dark:text-amber-400" />
+            <span>Hostel Permission Slip</span>
           </button>
 
           <button

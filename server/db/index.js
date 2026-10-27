@@ -58,14 +58,15 @@ const FALLBACK_DATA_FILE = path.join(__dirname, '..', 'data.json');
 function readFallbackData() {
   try {
     if (!fs.existsSync(FALLBACK_DATA_FILE)) {
-      return { students: [], equipment: [], loans: [], attendance: [], gatePasses: [] };
+      return { students: [], equipment: [], loans: [], attendance: [], gatePasses: [], hostelPermissions: [] };
     }
     const raw = fs.readFileSync(FALLBACK_DATA_FILE, 'utf-8');
     const parsed = JSON.parse(raw);
     if (!parsed.gatePasses) parsed.gatePasses = [];
+    if (!parsed.hostelPermissions) parsed.hostelPermissions = [];
     return parsed;
   } catch (err) {
-    return { students: [], equipment: [], loans: [], attendance: [], gatePasses: [] };
+    return { students: [], equipment: [], loans: [], attendance: [], gatePasses: [], hostelPermissions: [] };
   }
 }
 
@@ -121,7 +122,26 @@ export async function initDatabase() {
       `ALTER TABLE loans ADD COLUMN IF NOT EXISTS handover_photo_url TEXT;`,
       `ALTER TABLE loans ADD COLUMN IF NOT EXISTS return_condition VARCHAR(32);`,
       `ALTER TABLE loans ADD COLUMN IF NOT EXISTS notes TEXT;`,
-      `ALTER TABLE students ADD COLUMN IF NOT EXISTS college VARCHAR(128) DEFAULT 'MPGI';`
+      `ALTER TABLE students ADD COLUMN IF NOT EXISTS college VARCHAR(128) DEFAULT 'MPGI';`,
+      `CREATE TABLE IF NOT EXISTS hostel_permissions (
+        id VARCHAR(64) PRIMARY KEY,
+        permission_code VARCHAR(64),
+        warden_name VARCHAR(128),
+        warden_phone VARCHAR(32),
+        hostel_name VARCHAR(128),
+        from_date VARCHAR(64),
+        to_date VARCHAR(64),
+        from_time VARCHAR(64),
+        to_time VARCHAR(64),
+        venue VARCHAR(256),
+        purpose VARCHAR(256),
+        authorized_by VARCHAR(128) DEFAULT 'APEX Sports Officer / Coach',
+        notes TEXT,
+        players JSONB DEFAULT '[]'::jsonb,
+        status VARCHAR(32) DEFAULT 'Approved',
+        pdf_url TEXT,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      );`
     ];
 
     for (const sql of migrations) {
@@ -863,3 +883,118 @@ export const dbGatePasses = {
     return true;
   }
 };
+
+export const dbHostelPermissions = {
+  async getAll() {
+    if (isPgConnected) {
+      try {
+        const res = await pool.query('SELECT * FROM hostel_permissions ORDER BY created_at DESC;');
+        return res.rows.map(r => ({
+          id: r.id,
+          permissionCode: r.permission_code || r.id,
+          wardenName: r.warden_name || '',
+          wardenPhone: r.warden_phone || '',
+          hostelName: r.hostel_name || '',
+          fromDate: r.from_date || '',
+          toDate: r.to_date || '',
+          fromTime: r.from_time || '',
+          toTime: r.to_time || '',
+          venue: r.venue || '',
+          purpose: r.purpose || '',
+          authorizedBy: r.authorized_by || 'APEX Sports Officer / Coach',
+          notes: r.notes || '',
+          players: typeof r.players === 'string' ? JSON.parse(r.players) : (r.players || []),
+          status: r.status || 'Approved',
+          pdfUrl: r.pdf_url || null,
+          createdAt: r.created_at || new Date().toISOString()
+        }));
+      } catch (err) {
+        console.warn('PostgreSQL getAll hostel_permissions error, using fallback:', err.message);
+      }
+    }
+    const data = readFallbackData();
+    return (data.hostelPermissions || []).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  },
+
+  async create(permission) {
+    if (isPgConnected) {
+      try {
+        const sql = `
+          INSERT INTO hostel_permissions (
+            id, permission_code, warden_name, warden_phone, hostel_name, 
+            from_date, to_date, from_time, to_time, venue, purpose, 
+            authorized_by, notes, players, status, pdf_url, created_at
+          ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
+          RETURNING *;
+        `;
+        const vals = [
+          permission.id,
+          permission.permissionCode || permission.id,
+          permission.wardenName || '',
+          permission.wardenPhone || '',
+          permission.hostelName || '',
+          permission.fromDate || '',
+          permission.toDate || '',
+          permission.fromTime || '',
+          permission.toTime || '',
+          permission.venue || '',
+          permission.purpose || '',
+          permission.authorizedBy || 'APEX Sports Officer / Coach',
+          permission.notes || '',
+          JSON.stringify(permission.players || []),
+          permission.status || 'Approved',
+          permission.pdfUrl || null,
+          permission.createdAt || new Date().toISOString()
+        ];
+        const res = await pool.query(sql, vals);
+        const r = res.rows[0];
+        return {
+          id: r.id,
+          permissionCode: r.permission_code || r.id,
+          wardenName: r.warden_name,
+          wardenPhone: r.warden_phone,
+          hostelName: r.hostel_name,
+          fromDate: r.from_date,
+          toDate: r.to_date,
+          fromTime: r.from_time,
+          toTime: r.to_time,
+          venue: r.venue,
+          purpose: r.purpose,
+          authorizedBy: r.authorized_by,
+          notes: r.notes,
+          players: typeof r.players === 'string' ? JSON.parse(r.players) : (r.players || []),
+          status: r.status,
+          pdfUrl: r.pdf_url,
+          createdAt: r.created_at
+        };
+      } catch (err) {
+        console.error('PostgreSQL create hostel permission error, writing to fallback:', err.message);
+      }
+    }
+
+    const data = readFallbackData();
+    if (!data.hostelPermissions) data.hostelPermissions = [];
+    data.hostelPermissions.unshift(permission);
+    writeFallbackData(data);
+    return permission;
+  },
+
+  async delete(permissionId) {
+    if (isPgConnected) {
+      try {
+        await pool.query('DELETE FROM hostel_permissions WHERE id = $1 OR permission_code = $1;', [permissionId]);
+        return true;
+      } catch (err) {
+        console.warn('PostgreSQL delete hostel permission error, falling back:', err.message);
+      }
+    }
+    const data = readFallbackData();
+    const idx = (data.hostelPermissions || []).findIndex(p => p.id === permissionId || p.permissionCode === permissionId);
+    if (idx !== -1) {
+      data.hostelPermissions.splice(idx, 1);
+      writeFallbackData(data);
+    }
+    return true;
+  }
+};
+

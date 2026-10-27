@@ -11,6 +11,7 @@ import ReportsView from './components/ReportsView';
 import IssueGearModal from './components/IssueGearModal';
 import StudentHistoryModal from './components/StudentHistoryModal';
 import DayScholarPassModal from './components/DayScholarPassModal';
+import HostelPermissionModal from './components/HostelPermissionModal';
 import LoginScreen from './components/LoginScreen';
 import { api } from './utils/api';
 
@@ -19,6 +20,7 @@ function DashboardHome({
   setActiveTab, 
   onOpenIssueModal, 
   onOpenGatePassModal, 
+  onOpenHostelPermissionModal,
   onTakeAttendance,
   onManageGear
 }) {
@@ -31,6 +33,7 @@ function DashboardHome({
         setActiveTab={setActiveTab} 
         onOpenIssueModal={onOpenIssueModal} 
         onOpenGatePassModal={onOpenGatePassModal}
+        onOpenHostelPermissionModal={onOpenHostelPermissionModal}
       />
 
       {/* 12 Official Tournament Disciplines Section (From mpgisports.in) */}
@@ -64,6 +67,7 @@ export function AppContent() {
   const [stats, setStats] = useState({});
   const [isIssueModalOpen, setIsIssueModalOpen] = useState(false);
   const [isGatePassModalOpen, setIsGatePassModalOpen] = useState(false);
+  const [isHostelPermissionOpen, setIsHostelPermissionOpen] = useState(false);
   const [selectedStudentForHistory, setSelectedStudentForHistory] = useState(null);
   const [refreshKey, setRefreshKey] = useState(0);
   const [toast, setToast] = useState(null);
@@ -93,6 +97,7 @@ export function AppContent() {
         setActiveTab={setActiveTab}
         onOpenIssueModal={() => setIsIssueModalOpen(true)}
         onOpenGatePassModal={() => setIsGatePassModalOpen(true)}
+        onOpenHostelPermissionModal={() => setIsHostelPermissionOpen(true)}
         currentUser={currentUser}
         onLogout={handleLogout}
       />
@@ -141,6 +146,7 @@ export function AppContent() {
             setActiveTab={setActiveTab}
             onOpenIssueModal={() => setIsIssueModalOpen(true)}
             onOpenGatePassModal={() => setIsGatePassModalOpen(true)}
+            onOpenHostelPermissionModal={() => setIsHostelPermissionOpen(true)}
             onSelectStudentHistory={(stu) => setSelectedStudentForHistory(stu)}
             refreshKey={refreshKey}
             onTakeAttendance={(sportName) => {
@@ -217,6 +223,12 @@ export function AppContent() {
       <DayScholarPassModal
         isOpen={isGatePassModalOpen}
         onClose={() => setIsGatePassModalOpen(false)}
+      />
+
+      {/* Modal: Hostel Sports Permission Pass */}
+      <HostelPermissionModal
+        isOpen={isHostelPermissionOpen}
+        onClose={() => setIsHostelPermissionOpen(false)}
       />
 
       {/* Footer matching mpgisports.in */}

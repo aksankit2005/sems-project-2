@@ -121,3 +121,27 @@ CREATE TABLE IF NOT EXISTS day_scholar_passes (
 );
 
 CREATE INDEX IF NOT EXISTS idx_passes_created ON day_scholar_passes(created_at DESC);
+
+-- 7. HOSTEL SPORTS PERMISSION PASSES TABLE
+CREATE TABLE IF NOT EXISTS hostel_permissions (
+  id VARCHAR(64) PRIMARY KEY,
+  permission_code VARCHAR(64),
+  warden_name VARCHAR(128),
+  warden_phone VARCHAR(32),
+  hostel_name VARCHAR(128),
+  from_date VARCHAR(64),
+  to_date VARCHAR(64),
+  from_time VARCHAR(64),
+  to_time VARCHAR(64),
+  venue VARCHAR(256),
+  purpose VARCHAR(256),
+  authorized_by VARCHAR(128) DEFAULT 'APEX Sports Officer / Coach',
+  notes TEXT,
+  players JSONB DEFAULT '[]'::jsonb,
+  status VARCHAR(32) DEFAULT 'Approved',
+  pdf_url TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_hostel_perm_created ON hostel_permissions(created_at DESC);
+

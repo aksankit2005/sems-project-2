@@ -10,13 +10,22 @@ import {
   Users, 
   BarChart3,
   ShieldCheck,
+  FileText,
   LogOut,
   Bell,
   User
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 
-export default function Navbar({ activeTab, setActiveTab, onOpenIssueModal, onOpenGatePassModal, currentUser, onLogout }) {
+export default function Navbar({ 
+  activeTab, 
+  setActiveTab, 
+  onOpenIssueModal, 
+  onOpenGatePassModal, 
+  onOpenHostelPermissionModal,
+  currentUser, 
+  onLogout 
+}) {
   const { isDark, toggleTheme } = useTheme();
 
   const navLinks = [
@@ -69,6 +78,16 @@ export default function Navbar({ activeTab, setActiveTab, onOpenIssueModal, onOp
           {/* Right Header Actions matching mpgisports.in */}
           <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
             
+            {/* Hostel Permission action button */}
+            <button
+              onClick={onOpenHostelPermissionModal}
+              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-amber-700 dark:text-amber-300 hover:text-amber-900 bg-amber-500/10 hover:bg-amber-500/15 border border-amber-500/30 shadow-2xs transition-all cursor-pointer"
+              title="Hostel Sports Permission Slip for Warden"
+            >
+              <FileText className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" />
+              <span>Permission</span>
+            </button>
+
             {/* Gate Pass action button */}
             <button
               onClick={onOpenGatePassModal}

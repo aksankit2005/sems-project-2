@@ -8,7 +8,8 @@ import {
   dbEquipment, 
   dbLoans, 
   dbAttendance, 
-  dbGatePasses 
+  dbGatePasses,
+  dbHostelPermissions 
 } from './db/index.js';
 import { uploadToCloudinary, isConfigured as isCloudinaryConfigured } from './config/cloudinary.js';
 
@@ -728,6 +729,87 @@ app.delete('/api/gate-passes/:id', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+// ====================================================================
+// HOSTEL SPORTS PERMISSION PASSES (WARDEN NOTIFICATIONS)
+// ====================================================================
+
+// GET /api/hostel-permissions
+app.get('/api/hostel-permissions', async (req, res) => {
+  try {
+    const list = await dbHostelPermissions.getAll();
+    res.json({ permissions: list });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/hostel-permissions
+app.post('/api/hostel-permissions', async (req, res) => {
+  try {
+    const { 
+      wardenName, 
+      wardenPhone, 
+      hostelName, 
+      fromDate, 
+      toDate, 
+      fromTime, 
+      toTime, 
+      venue, 
+      purpose, 
+      authorizedBy, 
+      notes, 
+      players,
+      pdfUrl 
+    } = req.body;
+
+    if (!players || !Array.isArray(players) || players.length === 0) {
+      return res.status(400).json({ error: 'At least one player must be included in the permission slip' });
+    }
+
+    const newPermission = {
+      id: `PERM-${Date.now().toString().slice(-6)}`,
+      permissionCode: `MPGI/APEX/PERM-${Date.now().toString().slice(-4)}`,
+      wardenName: wardenName || 'Hostel Warden',
+      wardenPhone: wardenPhone || '',
+      hostelName: hostelName || 'Maharana Pratap Hostel',
+      fromDate: fromDate || new Date().toISOString().split('T')[0],
+      toDate: toDate || fromDate || new Date().toISOString().split('T')[0],
+      fromTime: fromTime || '04:30 PM',
+      toTime: toTime || '08:00 PM',
+      venue: venue || 'Campus Sports Ground',
+      purpose: purpose || 'Official Sports Match / Training Practice',
+      authorizedBy: authorizedBy || 'APEX Sports Officer / Coach',
+      notes: notes || '',
+      players: players.map((p, idx) => ({
+        id: p.id || `p-${idx + 1}`,
+        name: p.name || 'Player',
+        year: p.year || '1st Year',
+        hostelName: p.hostelName || hostelName || 'Hostel',
+        roomNumber: p.roomNumber || 'N/A'
+      })),
+      status: 'Approved',
+      pdfUrl: pdfUrl || null,
+      createdAt: new Date().toISOString()
+    };
+
+    const saved = await dbHostelPermissions.create(newPermission);
+    res.status(201).json({ permission: saved });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// DELETE /api/hostel-permissions/:id
+app.delete('/api/hostel-permissions/:id', async (req, res) => {
+  try {
+    await dbHostelPermissions.delete(req.params.id);
+    res.json({ success: true, message: 'Hostel permission pass deleted' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 
 // ====================================================================
 // DIRECT IMAGE UPLOAD TO CLOUDINARY
